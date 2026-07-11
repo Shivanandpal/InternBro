@@ -1,7 +1,10 @@
 import axios from "axios";
 
 const api = axios.create({
-    baseURL: "https://internbro-backend.onrender.com",
+    baseURL: "https://internbro-backend.onrender.com/",
+    headers: {
+        "Content-Type": "application/json",
+    }
 });
 
 api.interceptors.request.use((config) => {
