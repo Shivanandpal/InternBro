@@ -347,7 +347,7 @@ app.include_router(chat_router)
 app.include_router(payment_router)
 
 origins = [
-    "https://intern-bro-09.vercel.app/"
+    "https://intern-bro-09.vercel.app"
     "http://localhost:5173",
     "http://127.0.0.1:5173",
     "http://localhost:8080",
