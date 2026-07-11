@@ -1,0 +1,17 @@
+{
+  "name": "internbro-root",
+  "version": "1.0.0",
+  "description": "InternBRO - AI-powered Internship Platform",
+  "main": "server/server.js",
+  "scripts": {
+    "install-all": "npm install && npm install --prefix client --legacy-peer-deps && npm install --prefix server",
+    "server": "npm.cmd run dev --prefix server",
+    "client": "npm.cmd run dev --prefix client",
+    "backend": "python -m uvicorn app.main:app --port 8000 --app-dir backend",
+    "dev": "npx.cmd concurrently \"npm run server\" \"npm run client\" \"npm run backend\""
+  },
+  "dependencies": {
+    "axios": "^1.18.1",
+    "concurrently": "^8.2.2"
+  }
+}

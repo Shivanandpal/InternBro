@@ -1,0 +1,71 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  body {
+    @apply antialiased selection:bg-brand-500 selection:text-white;
+  }
+}
+
+/* Custom Scrollbars */
+::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+
+::-webkit-scrollbar-track {
+  @apply bg-transparent;
+}
+
+::-webkit-scrollbar-thumb {
+  @apply bg-gray-300 dark:bg-darkBorder rounded-full border-2 border-solid border-transparent bg-clip-padding hover:bg-gray-400 dark:hover:bg-brand-600/30;
+}
+
+/* Premium Component Styling Utilities */
+.glass {
+  background: rgba(255, 255, 255, 0.7);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border: 1px solid rgba(255, 255, 255, 0.4);
+}
+
+.dark .glass {
+  background: rgba(18, 20, 32, 0.65);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  border: 1px solid rgba(255, 255, 255, 0.05);
+}
+
+/* Glowing Radial Circles background components */
+.glow-blob {
+  position: absolute;
+  border-radius: 50%;
+  filter: blur(80px);
+  opacity: 0.15;
+  mix-blend-mode: screen;
+  pointer-events: none;
+}
+
+.dark .glow-blob {
+  opacity: 0.25;
+}
+
+/* Text Gradients */
+.text-gradient-indigo {
+  @apply bg-gradient-to-r from-brand-600 to-violetAccent-500 bg-clip-text text-transparent;
+}
+
+.dark .text-gradient-indigo {
+  @apply bg-gradient-to-r from-brand-400 via-brand-200 to-violetAccent-400 bg-clip-text text-transparent;
+}
+
+/* Page Layout Transition helpers */
+.page-transition {
+  animation: fadeIn 0.4s ease-out forwards;
+}
+
+/* Custom Card hover scale micro-animations */
+.hover-card {
+  @apply transition-all duration-300 hover:-translate-y-1 hover:shadow-xl hover:shadow-brand-500/5 dark:hover:shadow-brand-950/20;
+}
