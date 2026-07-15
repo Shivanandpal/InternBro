@@ -335,6 +335,24 @@ app = FastAPI(
     title="InternBro API",
     version="1.0.0"
 )
+
+origins = [
+    "https://intern-bro-09.vercel.app",
+    "http://localhost:5173"
+]
+
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=[
+        "https://intern-bro-09.vercel.app",  # Your production frontend
+        "http://localhost:5173",             # Your local Vite development URL
+        "http://localhost:3000"
+    ],
+    allow_credentials=True,
+    allow_methods=["*"],                     # Allows GET, POST, OPTIONS, etc.
+    allow_headers=["*"],                     # Allows Content-Type, Authorization, etc.
+)
+
 app.include_router(student_router)
 app.include_router(recruiter_router)
 app.include_router(admin_router)
@@ -346,18 +364,6 @@ app.include_router(match_router)
 app.include_router(chat_router)
 app.include_router(payment_router)
 
-origins = [
-    "https://intern-bro-09.vercel.app",
-    "http://localhost:5173"
-]
-
-app.add_middleware(
-    CORSMiddleware,
-    allow_origins=origins,
-    allow_credentials=True,
-    allow_methods=["*"],
-    allow_headers=["*"],
-)
 
 app.include_router(auth_router)
 
