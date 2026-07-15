@@ -331,7 +331,7 @@ try:
         neon_db.close()
 except Exception as migrate_err:
     print(f"DATABASE MIGRATION: User migration notice/skipping: {migrate_err}")
-app = FastAPI(
+app = FastAPI(redirect_slashes=False,
     title="InternBro API",
     version="1.0.0"
 )
