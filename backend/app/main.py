@@ -343,11 +343,7 @@ origins = [
 
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=[
-        "https://intern-bro-09.vercel.app",  # Your production frontend
-        "http://localhost:5173",             # Your local Vite development URL
-        "http://localhost:3000"
-    ],
+    allow_origins=["*"],
     allow_credentials=True,
     allow_methods=["*"],                     # Allows GET, POST, OPTIONS, etc.
     allow_headers=["*"],                     # Allows Content-Type, Authorization, etc.
