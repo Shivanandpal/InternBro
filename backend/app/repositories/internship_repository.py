@@ -1,3 +1,4 @@
+from sqlalchemy import func
 from sqlalchemy.orm import Session
 
 from app.models.internship import Internship
@@ -20,7 +21,7 @@ class InternshipRepository:
     def get_all(db: Session, status: str = None):
         query = db.query(Internship)
         if status:
-            query = query.filter(Internship.status == status)
+            query = query.filter(func.lower(Internship.status) == func.lower(status))
         return query.all()
 
     @staticmethod

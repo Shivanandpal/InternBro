@@ -1,4 +1,6 @@
 from pydantic import BaseModel
+from typing import Optional
+from datetime import datetime
 
 
 class InternshipCreate(BaseModel):
@@ -16,8 +18,9 @@ class InternshipCreate(BaseModel):
 class InternshipResponse(InternshipCreate):
 
     id: str
-    recruiter_id: str | None = None
+    recruiter_id: Optional[str] = None
     status: str
+    created_at: Optional[datetime] = None
 
     class Config:
         from_attributes = True
