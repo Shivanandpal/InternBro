@@ -30,7 +30,7 @@ export default function Listings() {
   const fetchJobs = async () => {
     setLoading(true);
     try {
-      const res = await fetch(`http://localhost:8000/internships?status=Approved`);
+      const res = await fetch(`http://localhost:8000/internships/?status=Approved`);
       if (res.ok) {
         const data = await res.json();
         const mapped = data.map(j => ({

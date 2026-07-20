@@ -212,7 +212,7 @@ export default function StudentDashboard() {
       // 2. Fetch saved jobs
       const savedIds = profile.profile?.savedJobs || [];
       if (savedIds.length > 0) {
-        const jobsRes = await fetch(`http://localhost:8000/internships?status=Approved`);
+        const jobsRes = await fetch(`http://localhost:8000/internships/?status=Approved`);
         if (jobsRes.ok) {
           const allJobs = await jobsRes.json();
           const mapped = allJobs.map(j => ({

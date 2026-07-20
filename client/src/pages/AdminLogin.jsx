@@ -6,8 +6,8 @@ import {
   Rocket, AlertTriangle, Users, BarChart2, Settings
 } from 'lucide-react';
 
-// Secret admin credentials — in a real app these would be server-validated
-const ADMIN_EMAIL    = 'system.admin@internbro.com';
+// Admin credentials — must match the seeded admin in the Python backend (main.py)
+const ADMIN_EMAIL    = 'admin@internbro.com';
 const ADMIN_SECRET   = 'admin123';
 
 const ADMIN_POWERS = [

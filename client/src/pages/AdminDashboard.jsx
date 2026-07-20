@@ -1,8 +1,8 @@
 import React, { useState, useEffect } from 'react';
-import { 
-  Shield, Briefcase, Users, Check, X, ShieldAlert, Award, 
-  Trash2, UserCheck, UserX, Search, PlusCircle, Calendar, 
-  BookOpen, FileCode, FileText, Download, Activity, ExternalLink, RefreshCw 
+import {
+  Shield, Briefcase, Users, Check, X, ShieldAlert, Award,
+  Trash2, UserCheck, UserX, Search, PlusCircle, Calendar,
+  BookOpen, FileCode, FileText, Download, Activity, ExternalLink, RefreshCw
 } from 'lucide-react';
 
 const API_BASE_URL = 'http://localhost:5000/api';
@@ -50,7 +50,7 @@ export default function AdminDashboard() {
 
   const getDynamicActivities = () => {
     const list = [];
-    
+
     // 1. Add recent applications
     applications.forEach(app => {
       list.push({
@@ -61,7 +61,7 @@ export default function AdminDashboard() {
         timestamp: app.appliedAt || new Date().toISOString()
       });
     });
-    
+
     // 2. Add recent users
     usersList.forEach(u => {
       list.push({
@@ -72,7 +72,7 @@ export default function AdminDashboard() {
         timestamp: u.createdAt || new Date(Date.now() - 3600000 * 24).toISOString()
       });
     });
-    
+
     // 3. Add recent internships
     allJobs.forEach(job => {
       list.push({
@@ -83,7 +83,7 @@ export default function AdminDashboard() {
         timestamp: job.created_at || new Date(Date.now() - 3600000 * 12).toISOString()
       });
     });
-    
+
     // Sort all by timestamp descending
     return list.sort((a, b) => new Date(b.timestamp) - new Date(a.timestamp)).slice(0, 30);
   };
@@ -93,7 +93,7 @@ export default function AdminDashboard() {
     const counts = {};
     let maxCount = 0;
     let popularJobTitle = 'None';
-    
+
     applications.forEach(app => {
       const title = app.jobDetails?.title || 'Unknown Internship';
       const company = app.jobDetails?.company || '';
@@ -104,7 +104,7 @@ export default function AdminDashboard() {
         popularJobTitle = key;
       }
     });
-    
+
     return `${popularJobTitle} (${maxCount} applied)`;
   };
 
@@ -125,28 +125,39 @@ export default function AdminDashboard() {
 
   const fetchAdminData = async () => {
     setLoading(true);
+
+    // 1. Fetch analytics
     try {
-      // 1. Fetch analytics
       const statsRes = await fetch(`${API_BASE_URL}/analytics`);
       if (statsRes.ok) {
         const statsData = await statsRes.json();
         setStats(statsData);
       }
+    } catch (err) {
+      console.warn("Could not retrieve analytics data.", err);
+    }
 
-      // 2. Fetch all jobs from Neon PostgreSQL Database (Python Backend)
-      const jobsRes = await fetch(`http://localhost:8000/internships`);
+    // 2. Fetch all jobs from Neon PostgreSQL Database (Python Backend)
+    try {
+      const jobsRes = await fetch(`http://localhost:8000/internships/`);
       if (jobsRes.ok) {
         const jobsData = await jobsRes.json();
         const mappedJobs = jobsData.map(j => ({
           ...j,
           skillsRequired: j.skills ? j.skills.split(',').map(s => s.trim()) : [],
-          status: j.status || 'Approved'
+          // Default to 'Pending' (not 'Approved') so new recruiter postings surface in the moderation queue
+          status: j.status || 'Pending'
         }));
         setAllJobs(mappedJobs);
-        setPendingJobs(mappedJobs.filter(j => j.status === 'Pending'));
+        // Filter for both 'Pending' (new) and case-insensitive variants
+        setPendingJobs(mappedJobs.filter(j => j.status?.toLowerCase() === 'pending'));
       }
+    } catch (err) {
+      console.warn("Could not retrieve internship listings from Python backend.", err);
+    }
 
-      // 3. Fetch all users from Neon PostgreSQL Database (Python Backend)
+    // 3. Fetch all users from Neon PostgreSQL Database (Python Backend)
+    try {
       const token = localStorage.getItem('token');
       const usersRes = await fetch(`http://localhost:8000/admin/users`, {
         headers: {
@@ -172,18 +183,22 @@ export default function AdminDashboard() {
         }));
         setUsersList(formattedUsers);
       }
+    } catch (err) {
+      console.warn("Could not retrieve users list from Python backend.", err);
+    }
 
-      // 4. Fetch all applications
+    // 4. Fetch all applications
+    try {
       const appsRes = await fetch(`${API_BASE_URL}/applications`);
       if (appsRes.ok) {
         const appsData = await appsRes.json();
         setApplications(appsData);
       }
     } catch (err) {
-      console.warn("Could not retrieve database records for Admin Dashboard.", err);
-    } finally {
-      setLoading(false);
+      console.warn("Could not retrieve applications from Express backend.", err);
     }
+
+    setLoading(false);
   };
 
   // Synchronize localStorage datasets on mount
@@ -265,47 +280,40 @@ export default function AdminDashboard() {
   }, []);
 
   const handleModeration = async (jobId, action) => {
+    const token = localStorage.getItem('token');
+    if (!token) {
+      alert('❌ No admin token found. Please log out and log back in as admin (admin@internbro.com).');
+      return;
+    }
     try {
-      const token = localStorage.getItem('token');
       const res = await fetch(`http://localhost:8000/internships/${jobId}/status`, {
         method: 'PUT',
-        headers: { 
+        headers: {
           'Content-Type': 'application/json',
           'Authorization': `Bearer ${token}`
         },
         body: JSON.stringify({ status: action })
       });
       if (res.ok) {
-        alert(`Listing status updated successfully to: ${action}`);
+        // Log activity on success
+        const targetJob = allJobs.find(j => j.id === jobId || j._id === jobId);
+        const logName = targetJob ? `"${targetJob.title}" at ${targetJob.company}` : 'Internship Posting';
+        logActivity(`Moderated Placement: Marked ${logName} as ${action}`);
+        alert(`✅ Listing has been ${action.toLowerCase()} and saved to database. Students can now see it in the Internships section.`);
         fetchAdminData();
       } else {
-        throw new Error("Failed to moderate job listing on Python backend.");
-      }
-    } catch (err) {
-      console.warn("Backend down. Simulating approval logic in React state.");
-      alert(`Simulated approval: Listing marked as ${action}!`);
-      
-      const localJobs = JSON.parse(localStorage.getItem('internbro_jobs') || '[]');
-      const idx = localJobs.findIndex(j => j.id === jobId || j._id === jobId);
-      if (idx !== -1) {
-        localJobs[idx].status = action;
-        localStorage.setItem('internbro_jobs', JSON.stringify(localJobs));
-      } else {
-        // Find in mock list and update/save in local jobs
-        const target = allJobs.find(j => j.id === jobId || j._id === jobId);
-        if (target) {
-          const updated = { ...target, status: action };
-          localJobs.push(updated);
-          localStorage.setItem('internbro_jobs', JSON.stringify(localJobs));
+        // Provide specific feedback based on HTTP status code
+        const errBody = await res.json().catch(() => ({}));
+        const errDetail = errBody.detail || res.statusText || 'Unknown error';
+        if (res.status === 401 || res.status === 403) {
+          alert(`❌ Authentication failed (${res.status}): ${errDetail}\n\nYour admin session may have expired. Please log out and log back in as admin@internbro.com.`);
+        } else {
+          alert(`❌ Could not update internship status (${res.status}): ${errDetail}`);
         }
       }
-
-      // Log activity
-      const targetJob = allJobs.find(j => j.id === jobId || j._id === jobId);
-      const logName = targetJob ? `"${targetJob.title}" at ${targetJob.company}` : "Internship Posting";
-      logActivity(`Moderated Placement: Marked ${logName} as ${action}`);
-
-      fetchAdminData();
+    } catch (err) {
+      console.error('handleModeration network error:', err);
+      alert(`❌ Network error — could not reach the backend server.\n\nMake sure the Python backend is running on http://localhost:8000.\n\nError: ${err.message}`);
     }
   };
 
@@ -368,7 +376,7 @@ export default function AdminDashboard() {
     const updated = usersList.map(u => u.uid === uid ? { ...u, role: newRole } : u);
     setUsersList(updated);
     localStorage.setItem('internbro_users', JSON.stringify(updated));
-    
+
     const targetUser = usersList.find(u => u.uid === uid);
     logActivity(`Changed role of user ${targetUser?.name || 'Unknown'} from ${currentRole} to ${newRole}`);
     alert(`Changed ${targetUser?.name}'s role to ${newRole.toUpperCase()} successfully.`);
@@ -381,7 +389,7 @@ export default function AdminDashboard() {
     const updated = usersList.filter(u => u.uid !== uid);
     setUsersList(updated);
     localStorage.setItem('internbro_users', JSON.stringify(updated));
-    
+
     logActivity(`Deleted user account: ${targetUser?.name} (${targetUser?.email})`);
     alert(`Account for ${targetUser?.name} has been removed.`);
   };
@@ -412,9 +420,8 @@ export default function AdminDashboard() {
     localStorage.setItem('internbro_assignments', JSON.stringify(updated));
     setSelectedAssignmentId(newAssign.id);
 
-    logActivity(`Assigned new assignment: "${assignTitle}"${
-      linkedInternship ? ` (linked to: ${linkedInternship.title} @ ${linkedInternship.company})` : ''
-    }`);
+    logActivity(`Assigned new assignment: "${assignTitle}"${linkedInternship ? ` (linked to: ${linkedInternship.title} @ ${linkedInternship.company})` : ''
+      }`);
 
     // Reset Form
     setAssignTitle('');
@@ -511,8 +518,8 @@ export default function AdminDashboard() {
 
   // Filtered lists
   const filteredUsers = usersList.filter(user => {
-    const matchesSearch = user.name.toLowerCase().includes(userSearch.toLowerCase()) || 
-                          user.email.toLowerCase().includes(userSearch.toLowerCase());
+    const matchesSearch = user.name.toLowerCase().includes(userSearch.toLowerCase()) ||
+      user.email.toLowerCase().includes(userSearch.toLowerCase());
     const matchesRole = roleFilter === '' || user.role === roleFilter;
     return matchesSearch && matchesRole;
   });
@@ -523,7 +530,7 @@ export default function AdminDashboard() {
   return (
     <div className="page-transition min-h-screen bg-gray-50 dark:bg-darkBg text-gray-900 dark:text-gray-100 transition-colors duration-300 py-10">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        
+
         {/* Header */}
         <div className="flex items-center justify-between mb-10 border-b border-gray-150 dark:border-darkBorder/40 pb-6">
           <div className="flex items-center space-x-3">
@@ -535,7 +542,7 @@ export default function AdminDashboard() {
               <p className="text-xs text-gray-400 mt-0.5">Platform logs audits, user roster moderation, and assignment uploads dispatcher.</p>
             </div>
           </div>
-          <button 
+          <button
             onClick={fetchAdminData}
             className="flex items-center space-x-1.5 px-3 py-1.5 text-xs font-semibold bg-gray-100 dark:bg-darkCard hover:bg-gray-200 dark:hover:bg-darkBorder border border-gray-200 dark:border-darkBorder text-gray-600 dark:text-gray-300 rounded-xl transition-all"
             title="Refresh database records"
@@ -576,17 +583,16 @@ export default function AdminDashboard() {
         </div>
 
         <div className="grid grid-cols-1 lg:grid-cols-4 gap-8 items-start">
-          
+
           {/* LEFT SIDEBAR NAVIGATION */}
           <div className="bg-white dark:bg-darkCard border border-gray-200/50 dark:border-darkBorder/40 rounded-3xl p-3 space-y-1 shadow-sm">
-            
+
             <button
               onClick={() => setActiveTab('moderation')}
-              className={`w-full flex items-center space-x-3 px-4 py-3 rounded-2xl text-sm font-semibold transition-all ${
-                activeTab === 'moderation'
+              className={`w-full flex items-center space-x-3 px-4 py-3 rounded-2xl text-sm font-semibold transition-all ${activeTab === 'moderation'
                   ? 'bg-emerald-50 dark:bg-emerald-950/20 text-emerald-600 dark:text-emerald-400'
                   : 'text-gray-500 hover:bg-gray-50 dark:hover:bg-darkBg hover:text-gray-900 dark:hover:text-white'
-              }`}
+                }`}
             >
               <ShieldAlert className="w-4 h-4" />
               <span>Moderation Queue</span>
@@ -597,11 +603,10 @@ export default function AdminDashboard() {
 
             <button
               onClick={() => setActiveTab('listings')}
-              className={`w-full flex items-center space-x-3 px-4 py-3 rounded-2xl text-sm font-semibold transition-all ${
-                activeTab === 'listings'
+              className={`w-full flex items-center space-x-3 px-4 py-3 rounded-2xl text-sm font-semibold transition-all ${activeTab === 'listings'
                   ? 'bg-emerald-50 dark:bg-emerald-950/20 text-emerald-600 dark:text-emerald-400'
                   : 'text-gray-500 hover:bg-gray-50 dark:hover:bg-darkBg hover:text-gray-900 dark:hover:text-white'
-              }`}
+                }`}
             >
               <Briefcase className="w-4 h-4" />
               <span>Manage Placements</span>
@@ -613,11 +618,10 @@ export default function AdminDashboard() {
 
             <button
               onClick={() => setActiveTab('users-activity')}
-              className={`w-full flex items-center space-x-3 px-4 py-3 rounded-2xl text-sm font-semibold transition-all ${
-                activeTab === 'users-activity'
+              className={`w-full flex items-center space-x-3 px-4 py-3 rounded-2xl text-sm font-semibold transition-all ${activeTab === 'users-activity'
                   ? 'bg-emerald-50 dark:bg-emerald-950/20 text-emerald-600 dark:text-emerald-400'
                   : 'text-gray-500 hover:bg-gray-50 dark:hover:bg-darkBg hover:text-gray-900 dark:hover:text-white'
-              }`}
+                }`}
             >
               <Activity className="w-4 h-4" />
               <span>Users Activity</span>
@@ -628,11 +632,10 @@ export default function AdminDashboard() {
 
             <button
               onClick={() => setActiveTab('total-users')}
-              className={`w-full flex items-center space-x-3 px-4 py-3 rounded-2xl text-sm font-semibold transition-all ${
-                activeTab === 'total-users'
+              className={`w-full flex items-center space-x-3 px-4 py-3 rounded-2xl text-sm font-semibold transition-all ${activeTab === 'total-users'
                   ? 'bg-emerald-50 dark:bg-emerald-950/20 text-emerald-600 dark:text-emerald-400'
                   : 'text-gray-500 hover:bg-gray-50 dark:hover:bg-darkBg hover:text-gray-900 dark:hover:text-white'
-              }`}
+                }`}
             >
               <Users className="w-4 h-4" />
               <span>No. of Users</span>
@@ -641,11 +644,10 @@ export default function AdminDashboard() {
 
             <button
               onClick={() => setActiveTab('assignments')}
-              className={`w-full flex items-center space-x-3 px-4 py-3 rounded-2xl text-sm font-semibold transition-all ${
-                activeTab === 'assignments'
+              className={`w-full flex items-center space-x-3 px-4 py-3 rounded-2xl text-sm font-semibold transition-all ${activeTab === 'assignments'
                   ? 'bg-emerald-50 dark:bg-emerald-950/20 text-emerald-600 dark:text-emerald-400'
                   : 'text-gray-500 hover:bg-gray-50 dark:hover:bg-darkBg hover:text-gray-900 dark:hover:text-white'
-              }`}
+                }`}
             >
               <BookOpen className="w-4 h-4" />
               <span>Assignment Column</span>
@@ -660,7 +662,7 @@ export default function AdminDashboard() {
 
           {/* MAIN ACTIONS AREA */}
           <div className="lg:col-span-3">
-            
+
             {/* TAB: MODERATION QUEUE WORKSPACE */}
             {activeTab === 'moderation' && (
               <div className="bg-white dark:bg-darkCard border border-gray-200/50 dark:border-darkBorder/40 rounded-3xl p-6 space-y-6 shadow-sm">
@@ -828,14 +830,13 @@ export default function AdminDashboard() {
                               ) : null}
                               <div className="relative flex space-x-3">
                                 <div>
-                                  <span className={`h-8 w-8 rounded-full flex items-center justify-center ring-8 ring-white dark:ring-darkCard ${
-                                    act.role === 'admin' ? 'bg-emerald-100 text-emerald-600 dark:bg-emerald-950/40 dark:text-emerald-400' :
-                                    act.role === 'recruiter' ? 'bg-violetAccent-100 text-violetAccent-600 dark:bg-violetAccent-950/40 dark:text-violetAccent-400' :
-                                    'bg-brand-100 text-brand-600 dark:bg-brand-950/40 dark:text-brand-400'
-                                  }`}>
+                                  <span className={`h-8 w-8 rounded-full flex items-center justify-center ring-8 ring-white dark:ring-darkCard ${act.role === 'admin' ? 'bg-emerald-100 text-emerald-600 dark:bg-emerald-950/40 dark:text-emerald-400' :
+                                      act.role === 'recruiter' ? 'bg-violetAccent-100 text-violetAccent-600 dark:bg-violetAccent-950/40 dark:text-violetAccent-400' :
+                                        'bg-brand-100 text-brand-600 dark:bg-brand-950/40 dark:text-brand-400'
+                                    }`}>
                                     {act.role === 'admin' ? <Shield className="w-4 h-4" /> :
-                                     act.role === 'recruiter' ? <Briefcase className="w-4 h-4" /> :
-                                     <Users className="w-4 h-4" />}
+                                      act.role === 'recruiter' ? <Briefcase className="w-4 h-4" /> :
+                                        <Users className="w-4 h-4" />}
                                   </span>
                                 </div>
                                 <div className="flex-grow pt-1.5 flex justify-between gap-4 text-xs">
@@ -845,7 +846,7 @@ export default function AdminDashboard() {
                                     <p className="text-gray-600 dark:text-gray-300 mt-1 font-medium">{act.action}</p>
                                   </div>
                                   <div className="text-right text-gray-400 whitespace-nowrap">
-                                    {new Date(act.timestamp).toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'})}
+                                    {new Date(act.timestamp).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
                                     <span className="block text-[9px] mt-0.5">{new Date(act.timestamp).toLocaleDateString()}</span>
                                   </div>
                                 </div>
@@ -892,7 +893,7 @@ export default function AdminDashboard() {
                   </select>
                 </div>
 
-                 {/* User Cards Grid */}
+                {/* User Cards Grid */}
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                   {filteredUsers.length === 0 ? (
                     <div className="col-span-2 py-8 text-center text-gray-400 text-xs font-medium">
@@ -902,7 +903,7 @@ export default function AdminDashboard() {
                     filteredUsers.map(u => {
                       const isStudent = u.role?.toLowerCase() === 'student';
                       const studentApps = applications.filter(app => app.studentId === u.uid || app.studentId === u.id);
-                      
+
                       return (
                         <div
                           key={u.uid || u._id}
@@ -910,11 +911,10 @@ export default function AdminDashboard() {
                         >
                           <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 border-b border-gray-100 dark:border-darkBorder/20 pb-3">
                             <div className="flex items-center space-x-3">
-                              <div className={`w-11 h-11 rounded-full flex items-center justify-center font-bold text-sm ${
-                                isStudent ? 'bg-brand-100 text-brand-600 dark:bg-brand-950/30' :
-                                u.role?.toLowerCase() === 'recruiter' ? 'bg-violetAccent-100 text-violetAccent-600 dark:bg-violetAccent-950/30' :
-                                'bg-emerald-100 text-emerald-600 dark:bg-emerald-950/30'
-                              }`}>
+                              <div className={`w-11 h-11 rounded-full flex items-center justify-center font-bold text-sm ${isStudent ? 'bg-brand-100 text-brand-600 dark:bg-brand-950/30' :
+                                  u.role?.toLowerCase() === 'recruiter' ? 'bg-violetAccent-100 text-violetAccent-600 dark:bg-violetAccent-950/30' :
+                                    'bg-emerald-100 text-emerald-600 dark:bg-emerald-950/30'
+                                }`}>
                                 {u.name ? u.name.charAt(0) : 'U'}
                               </div>
                               <div>
@@ -927,7 +927,7 @@ export default function AdminDashboard() {
                                 <p className="text-xs text-gray-400">{u.email}</p>
                               </div>
                             </div>
-                            
+
                             <div className="flex items-center space-x-2">
                               {u.uid !== 'admin-uid-789' && u.id !== 'admin-uid-789' && (
                                 <button
@@ -990,11 +990,10 @@ export default function AdminDashboard() {
                                           at {app.jobDetails?.company || 'Recruiter'}
                                         </p>
                                         <div className="flex items-center justify-between gap-2 mt-1">
-                                          <span className={`text-[10px] font-extrabold uppercase px-2 py-0.5 rounded ${
-                                            app.status === 'Shortlisted' ? 'bg-emerald-50 dark:bg-emerald-950/20 text-emerald-600 dark:text-emerald-400' :
-                                            app.status === 'Rejected' ? 'bg-red-50 dark:bg-red-950/20 text-red-600 dark:text-red-400' :
-                                            'bg-amber-50 dark:bg-amber-950/20 text-amber-600 dark:text-amber-400'
-                                          }`}>
+                                          <span className={`text-[10px] font-extrabold uppercase px-2 py-0.5 rounded ${app.status === 'Shortlisted' ? 'bg-emerald-50 dark:bg-emerald-950/20 text-emerald-600 dark:text-emerald-400' :
+                                              app.status === 'Rejected' ? 'bg-red-50 dark:bg-red-950/20 text-red-600 dark:text-red-400' :
+                                                'bg-amber-50 dark:bg-amber-950/20 text-amber-600 dark:text-amber-400'
+                                            }`}>
                                             {app.status}
                                           </span>
                                           <div className="flex items-center space-x-1.5">
@@ -1040,7 +1039,7 @@ export default function AdminDashboard() {
             {/* TAB: ASSIGNMENT COLUMN */}
             {activeTab === 'assignments' && (
               <div className="space-y-6">
-                
+
                 {/* ASSIGNMENT PUBLISHER BOX */}
                 <div className="bg-white dark:bg-darkCard border border-gray-200/50 dark:border-darkBorder/40 rounded-3xl p-6 space-y-6 shadow-sm">
                   <div>
@@ -1136,7 +1135,7 @@ export default function AdminDashboard() {
 
                 {/* ACTIVE ASSIGNMENTS AUDIT TRAIL */}
                 <div className="bg-white dark:bg-darkCard border border-gray-200/50 dark:border-darkBorder/40 rounded-3xl p-6 space-y-6 shadow-sm">
-                  
+
                   <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-b border-gray-100 dark:border-darkBorder/30 pb-4">
                     <div>
                       <h2 className="font-display font-extrabold text-xl dark:text-white">Active Assignments Submissions</h2>
@@ -1372,7 +1371,7 @@ export default function AdminDashboard() {
       {previewFile && (
         <div className="fixed inset-0 z-50 bg-black/60 backdrop-blur-sm flex items-center justify-center p-4">
           <div className="bg-white dark:bg-darkCard border border-gray-200 dark:border-darkBorder rounded-3xl max-w-2xl w-full max-h-[85vh] flex flex-col shadow-2xl animate-scale-up">
-            
+
             {/* Modal Header */}
             <div className="p-5 border-b border-gray-150 dark:border-darkBorder/40 flex justify-between items-center">
               <div className="flex items-center space-x-2">
@@ -1386,7 +1385,7 @@ export default function AdminDashboard() {
                   <p className="text-[10px] text-gray-400">File Type: {previewFile.type === 'code' ? 'Code Deliverable' : 'Documentation Report'}</p>
                 </div>
               </div>
-              <button 
+              <button
                 onClick={() => setPreviewFile(null)}
                 className="p-1.5 hover:bg-gray-100 dark:hover:bg-darkBg rounded-xl transition-colors text-gray-400 hover:text-gray-600"
               >
