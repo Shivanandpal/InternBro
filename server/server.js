@@ -138,7 +138,7 @@ app.get('/api/applications', async (req, res) => {
       let job = await db.jobs.findById(app.jobId);
       if (!job) {
         try {
-          const pyRes = await fetch(`http://localhost:8000/internships/${app.jobId}`);
+          const pyRes = await fetch(`https://internbro.onrender.com/internships/${app.jobId}`);
           if (pyRes.ok) {
             const pyJob = await pyRes.json();
             job = {
@@ -411,5 +411,5 @@ app.post('/api/ai/recommendations', getRecommendations);
 
 // Start server listener
 app.listen(PORT, () => {
-  console.log(`🚀 InternBRO Backend running at http://localhost:${PORT}`);
+  console.log(`🚀 InternBRO Backend running at https://internbro.onrender.com:${PORT}`);
 });
