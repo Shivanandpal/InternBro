@@ -4,7 +4,9 @@ import { useAuth } from '../context/AuthContext';
 import InternshipCard from '../components/InternshipCard';
 import { Search, Filter, RefreshCw, X } from 'lucide-react';
 
-const API_BASE_URL = 'http://localhost:5000/api';
+const API_BASE_URL = 'https://internbro.onrender.com/api';
+
+//checks
 
 export default function Listings() {
   const { profile, updateProfile } = useAuth();
@@ -12,7 +14,7 @@ export default function Listings() {
 
   const [jobs, setJobs] = useState([]);
   const [loading, setLoading] = useState(true);
-  
+
   // Search & Filter state
   const [search, setSearch] = useState('');
   const [typeFilter, setTypeFilter] = useState('');
@@ -30,7 +32,7 @@ export default function Listings() {
   const fetchJobs = async () => {
     setLoading(true);
     try {
-      const res = await fetch(`http://localhost:8000/internships/?status=Approved`);
+      const res = await fetch(`https://internbro.onrender.com/internships/?status=Approved`);
       if (res.ok) {
         const data = await res.json();
         const mapped = data.map(j => ({
@@ -85,7 +87,7 @@ export default function Listings() {
     const titleMatch = job.title?.toLowerCase().includes(sTerm) || false;
     const companyMatch = job.company?.toLowerCase().includes(sTerm) || false;
     const skillMatch = job.skillsRequired?.some(s => s.toLowerCase().includes(sTerm)) || false;
-    
+
     const matchesSearch = !search || titleMatch || companyMatch || skillMatch;
     const matchesType = !typeFilter || job.type === typeFilter;
     const matchesLocation = !locationFilter || (
@@ -98,7 +100,7 @@ export default function Listings() {
   return (
     <div className="page-transition min-h-screen bg-gray-50 dark:bg-darkBg text-gray-900 dark:text-gray-100 transition-colors duration-300 py-10">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        
+
         {/* Header */}
         <div className="mb-8">
           <h1 className="font-display font-extrabold text-3xl dark:text-white">Explore Internships</h1>
@@ -107,7 +109,7 @@ export default function Listings() {
 
         {/* Filter Toolbar / Top Bar */}
         <div className="grid grid-cols-1 lg:grid-cols-4 gap-6 items-start">
-          
+
           {/* LEFT COLUMN: FILTERS PANEL */}
           <div className="bg-white dark:bg-darkCard border border-gray-200/50 dark:border-darkBorder/40 rounded-2xl p-6 space-y-6">
             <div className="flex items-center justify-between border-b border-gray-100 dark:border-darkBorder/40 pb-4">
@@ -155,7 +157,7 @@ export default function Listings() {
 
           {/* RIGHT COLUMN: SEARCH + CARDS GRID */}
           <div className="lg:col-span-3 space-y-6">
-            
+
             {/* Search Input Bar */}
             <div className="flex items-center p-1 bg-white dark:bg-darkCard border border-gray-200/50 dark:border-darkBorder/40 rounded-2xl shadow-sm">
               <div className="relative flex-grow">
