@@ -337,7 +337,7 @@ app = FastAPI(
 )
 
 origins = [
-    "https://intern-bro-09.vercel.app",
+    "https://intern-bro-09.vercel.app/",
     "http://localhost:5173"
 ]
 
