@@ -7,7 +7,7 @@ import {
 import { Link } from 'react-router-dom';
 import AuthModal from '../components/AuthModal';
 
-const API_BASE_URL = 'http://localhost:5000/api';
+const API_BASE_URL = 'https://internbro.onrender.com/api';
 
 export default function StudentDashboard() {
   const { user, profile, updateProfile } = useAuth();
@@ -212,7 +212,7 @@ export default function StudentDashboard() {
       // 2. Fetch saved jobs
       const savedIds = profile.profile?.savedJobs || [];
       if (savedIds.length > 0) {
-        const jobsRes = await fetch(`http://localhost:8000/internships/?status=Approved`);
+        const jobsRes = await fetch(`https://internbro.onrender.com/internships/?status=Approved`);
         if (jobsRes.ok) {
           const allJobs = await jobsRes.json();
           const mapped = allJobs.map(j => ({
@@ -226,7 +226,8 @@ export default function StudentDashboard() {
         setSavedJobs([]);
       }
 
-      // 3. Fetch discussions
+
+      // 3.0. Fetch discussions
       const discRes = await fetch(`${API_BASE_URL}/discussions`);
       if (discRes.ok) {
         const discData = await discRes.json();
@@ -927,7 +928,7 @@ export default function StudentDashboard() {
             {/* TAB CONTENT: VIEW PROFILE */}
             {activeTab === 'view-profile' && (
               <div className="bg-white dark:bg-darkCard border border-gray-200/50 dark:border-darkBorder/40 rounded-3xl p-6 space-y-6">
-                
+
                 {/* Profile Header */}
                 <div className="flex flex-col sm:flex-row items-center sm:items-start space-y-4 sm:space-y-0 sm:space-x-6 pb-6 border-b border-gray-100 dark:border-darkBorder/40">
                   <img
@@ -955,7 +956,7 @@ export default function StudentDashboard() {
 
                 {/* Contact & Education Details Grid */}
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                  
+
                   {/* Left Column: Personal info */}
                   <div className="space-y-4">
                     <h3 className="text-xs font-bold text-gray-400 uppercase tracking-widest">Contact Details</h3>
