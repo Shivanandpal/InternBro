@@ -3,12 +3,12 @@ import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 import { Briefcase, ArrowLeft, Send, Sparkles, ShieldAlert } from 'lucide-react';
 
-const API_BASE_URL = 'http://localhost:5000/api';
+const API_BASE_URL = 'https://internbro.onrender.com/api';
 
 export default function AddInternship() {
   const { user, profile } = useAuth();
   const navigate = useNavigate();
-
+  //checks
   // Guard access to Admin role
   const isAdmin = user?.role?.toUpperCase() === 'ADMIN' || profile?.role?.toUpperCase() === 'ADMIN';
 

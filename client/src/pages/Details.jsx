@@ -18,7 +18,7 @@ export default function Details() {
   const [alreadyApplied, setAlreadyApplied] = useState(false);
   const [submittingApp, setSubmittingApp] = useState(false);
   const [appSuccess, setAppSuccess] = useState(false);
-
+  //checks
   // Apply modal form states
   const [resumeUrl, setResumeUrl] = useState('');
   const [coverNote, setCoverNote] = useState('');

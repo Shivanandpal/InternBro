@@ -4,7 +4,7 @@ import { Rocket, Briefcase, Users, Building, ChevronRight, Star, ChevronDown, Ch
 import StatCard from '../components/StatCard';
 import InternshipCard from '../components/InternshipCard';
 
-const API_BASE_URL = 'http://localhost:5000/api';
+const API_BASE_URL = 'https://internbro.onrender.com/api';
 
 export default function Home() {
   const navigate = useNavigate();
@@ -15,11 +15,11 @@ export default function Home() {
   useEffect(() => {
     // Scroll to top
     window.scrollTo(0, 0);
-
+    //checks
     // Fetch featured jobs
     const fetchFeatured = async () => {
       try {
-        const res = await fetch(`http://localhost:8000/internships/?status=Approved`);
+        const res = await fetch(`https://internbro.onrender.com/internships/?status=Approved`);
         if (res.ok) {
           const data = await res.json();
           const mapped = data.map(j => ({
@@ -135,7 +135,7 @@ export default function Home() {
 
   return (
     <div className="page-transition min-h-screen relative overflow-hidden bg-gray-50 dark:bg-darkBg text-gray-900 dark:text-gray-100 transition-colors duration-300">
-      
+
       {/* Background blobs for premium glow */}
       <div className="glow-blob w-[400px] h-[400px] bg-brand-500 top-[-100px] left-[-100px]"></div>
       <div className="glow-blob w-[500px] h-[500px] bg-violetAccent-500 bottom-[-100px] right-[-100px]"></div>
@@ -147,9 +147,9 @@ export default function Home() {
             <Zap className="w-3.5 h-3.5 fill-brand-500 text-brand-500" />
             <span>AI-Driven Career Platform for Next-Gen Builders</span>
           </div>
-          
+
           <h1 className="font-display font-extrabold text-4xl sm:text-5xl md:text-6xl tracking-tight leading-none text-gray-900 dark:text-white">
-            Launch Your Career,<br/>
+            Launch Your Career,<br />
             <span className="bg-gradient-to-r from-brand-600 via-brand-500 to-violetAccent-500 bg-clip-text text-transparent">
               One Internship at a Time.
             </span>
@@ -258,7 +258,7 @@ export default function Home() {
       {/* RECRUITER & STUDENT CTA SECTION */}
       <section className="max-w-7xl mx-auto px-4 py-16 sm:px-6 lg:px-8 border-t border-gray-200/50 dark:border-darkBorder/30">
         <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-          
+
           {/* Student CTA */}
           <div className="bg-gradient-to-tr from-brand-600/90 to-brand-700 text-white rounded-3xl p-8 shadow-xl relative overflow-hidden flex flex-col justify-between h-[300px]">
             <div className="relative z-10 space-y-4">

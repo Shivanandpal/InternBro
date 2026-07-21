@@ -7,7 +7,7 @@ export const AuthProvider = ({ children }) => {
   const [user, setUser] = useState(null);
   const [profile, setProfile] = useState(null);
   const [loading, setLoading] = useState(true);
-
+  // checks
   // Sync profile details from Express server (port 5000) using Python User's ID
   const syncProfile = async (userData) => {
     if (!userData) return;
@@ -15,9 +15,9 @@ export const AuthProvider = ({ children }) => {
       const emailQuery = encodeURIComponent(userData.email || "");
       const nameQuery = encodeURIComponent(userData.name || "User");
       const roleQuery = encodeURIComponent((userData.role || "student").toLowerCase());
-      
+
       const res = await fetch(
-        `http://localhost:5000/api/users/${userData.id}?email=${emailQuery}&name=${nameQuery}&role=${roleQuery}`
+        `https://internbro.onrender.com/api/users/${userData.id}?email=${emailQuery}&name=${nameQuery}&role=${roleQuery}`
       );
       if (res.ok) {
         const profData = await res.json();
@@ -106,7 +106,7 @@ export const AuthProvider = ({ children }) => {
   const updateProfile = async (updatedPayload) => {
     if (!user) return false;
     try {
-      const res = await fetch(`http://localhost:5000/api/users/${user.id}`, {
+      const res = await fetch(`https://internbro.onrender.com/api/users/${user.id}`, {
         method: "PUT",
         headers: {
           "Content-Type": "application/json"

@@ -3,14 +3,14 @@ import { useAuth } from '../context/AuthContext';
 import { Link } from 'react-router-dom';
 import { Building, Briefcase, Users, PlusCircle, CheckCircle, XCircle, LineChart, ExternalLink, Calendar, DollarSign, ListTodo, FileText, AlertTriangle } from 'lucide-react';
 
-const API_BASE_URL = 'http://localhost:5000/api';
+const API_BASE_URL = 'https://internbro.onrender.com/api';
 
 export default function RecruiterDashboard() {
   const { user, profile, updateProfile } = useAuth();
 
   // Navigation state
   const [activeTab, setActiveTab] = useState('applicants');
-
+  //checks
   // Job postings and applicants list
   const [myJobs, setMyJobs] = useState([]);
   const [applicants, setApplicants] = useState([]);
@@ -43,7 +43,7 @@ export default function RecruiterDashboard() {
     try {
       // 1. Fetch postings created by this recruiter from Neon PostgreSQL
       const token = localStorage.getItem('token');
-      const jobsRes = await fetch(`http://localhost:8000/internships/my`, {
+      const jobsRes = await fetch(`https://internbro.onrender.com/internships/my`, {
         headers: {
           'Authorization': `Bearer ${token}`
         }
@@ -146,7 +146,7 @@ export default function RecruiterDashboard() {
       };
 
       const token = localStorage.getItem('token');
-      const res = await fetch(`http://localhost:8000/internships/`, {
+      const res = await fetch(`https://internbro.onrender.com/internships/`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -247,7 +247,7 @@ export default function RecruiterDashboard() {
           const token = localStorage.getItem('token');
           if (token) {
             try {
-              await fetch(`http://localhost:8000/applications/sync-status`, {
+              await fetch(`https://internbro.onrender.com/applications/sync-status`, {
                 method: 'PUT',
                 headers: {
                   'Content-Type': 'application/json',

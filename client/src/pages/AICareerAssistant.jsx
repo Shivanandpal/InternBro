@@ -4,12 +4,12 @@ import { useAuth } from '../context/AuthContext';
 import { FileSearch, Sparkles, MessageSquareCode, FileText, Send, CheckCircle2, ChevronRight, Zap, RefreshCw, Star, CreditCard, Lock, Check, Download, Image, Clock, LogIn, Upload } from 'lucide-react';
 import * as authAPI from '../api/auth';
 
-const API_BASE_URL = 'http://localhost:5000/api';
+const API_BASE_URL = 'https://internbro.onrender.com/api';
 
 export default function AICareerAssistant() {
   const { user, setUser, profile, updateProfile } = useAuth();
   const navigate = useNavigate();
-
+  //checks
   // Workspace tabs: 'analyzer' | 'chat' | 'builder'
   const [activeTab, setActiveTab] = useState('analyzer');
 
@@ -255,7 +255,7 @@ export default function AICareerAssistant() {
     const token = localStorage.getItem("token");
 
     try {
-      const res = await fetch("http://localhost:8000/chat/", {
+      const res = await fetch("https://internbro.onrender.com/chat/", {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -355,7 +355,7 @@ export default function AICareerAssistant() {
       }
       try {
         const token = localStorage.getItem("token");
-        const res = await fetch("http://localhost:8000/payment/create-order-templates", {
+        const res = await fetch("https://internbro.onrender.com/payment/create-order-templates", {
           method: "POST",
           headers: {
             "Authorization": `Bearer ${token}`
@@ -388,7 +388,7 @@ export default function AICareerAssistant() {
           order_id: orderData.id,
           handler: async function (response) {
             try {
-              const verifyRes = await fetch("http://localhost:8000/payment/verify", {
+              const verifyRes = await fetch("https://internbro.onrender.com/payment/verify", {
                 method: "POST",
                 headers: {
                   "Content-Type": "application/json",
@@ -444,7 +444,7 @@ export default function AICareerAssistant() {
     }
     try {
       const token = localStorage.getItem("token");
-      const res = await fetch("http://localhost:8000/payment/create-order-templates", {
+      const res = await fetch("https://internbro.onrender.com/payment/create-order-templates", {
         method: "POST",
         headers: {
           "Authorization": `Bearer ${token}`
@@ -467,7 +467,7 @@ export default function AICareerAssistant() {
         order_id: orderData.id,
         handler: async function (response) {
           try {
-            const verifyRes = await fetch("http://localhost:8000/payment/verify", {
+            const verifyRes = await fetch("https://internbro.onrender.com/payment/verify", {
               method: "POST",
               headers: {
                 "Content-Type": "application/json",

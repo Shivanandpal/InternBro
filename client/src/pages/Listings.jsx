@@ -14,7 +14,7 @@ export default function Listings() {
 
   const [jobs, setJobs] = useState([]);
   const [loading, setLoading] = useState(true);
-
+  //checks
   // Search & Filter state
   const [search, setSearch] = useState('');
   const [typeFilter, setTypeFilter] = useState('');

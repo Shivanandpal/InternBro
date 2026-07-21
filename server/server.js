@@ -131,7 +131,7 @@ app.get('/api/applications', async (req, res) => {
     if (jobId) query.jobId = jobId;
 
     let applications = await db.applications.find(query);
-
+    //checks
     // Attach full job metadata to each application for dashboards
     let enrichedApps = [];
     for (const app of applications) {

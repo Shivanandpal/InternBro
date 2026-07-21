@@ -27,7 +27,7 @@ export default function StudentLogin() {
   const navigate = useNavigate();
   const location = useLocation();
   const from = location.state?.from?.pathname || '/student-dashboard';
-
+  //checks
   useEffect(() => {
     const params = new URLSearchParams(location.search);
     const token = params.get('token');
@@ -80,7 +80,7 @@ export default function StudentLogin() {
           selectedRole
         );
       }
-      
+
       if (loggedUser?.role === 'ADMIN') {
         navigate('/admin-dashboard', { replace: true });
       } else if (loggedUser?.role === 'RECRUITER') {
@@ -220,7 +220,7 @@ export default function StudentLogin() {
             {/* Google OAuth Button */}
             <button
               type="button"
-              onClick={() => window.location.href = 'http://localhost:8000/auth/google'}
+              onClick={() => window.location.href = 'https://internbro.onrender.com/auth/google'}
               className="w-full flex items-center justify-center gap-3 py-3 px-4 rounded-xl border border-gray-200 dark:border-darkBorder bg-white dark:bg-darkBg text-gray-700 dark:text-gray-200 font-semibold text-sm hover:bg-gray-50 dark:hover:bg-darkCard transition-all shadow-sm mb-6"
             >
               <svg className="w-5 h-5 flex-shrink-0" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">

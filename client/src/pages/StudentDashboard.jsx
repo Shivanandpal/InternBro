@@ -13,7 +13,7 @@ export default function StudentDashboard() {
   const { user, profile, updateProfile } = useAuth();
 
   const [authModalOpen, setAuthModalOpen] = useState(false);
-
+  //checks
   // Dashboard Tabs
   const [activeTab, setActiveTab] = useState('applications');
 
