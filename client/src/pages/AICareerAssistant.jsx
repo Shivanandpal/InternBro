@@ -50,7 +50,7 @@ export default function AICareerAssistant() {
     }
     try {
       const token = localStorage.getItem("token");
-      const res = await fetch("http://localhost:8000/payment/create-order", {
+      const res = await fetch("https://internbro.onrender.com/payment/create-order", {
         method: "POST",
         headers: {
           "Authorization": `Bearer ${token}`
@@ -79,7 +79,7 @@ export default function AICareerAssistant() {
         order_id: orderData.id,
         handler: async function (response) {
           try {
-            const verifyRes = await fetch("http://localhost:8000/payment/verify", {
+            const verifyRes = await fetch("https://internbro.onrender.com/payment/verify", {
               method: "POST",
               headers: {
                 "Content-Type": "application/json",
@@ -198,7 +198,7 @@ export default function AICareerAssistant() {
       if (inputMode === 'upload' && resumeFile) {
         const formData = new FormData();
         formData.append("file", resumeFile);
-        res = await fetch("http://localhost:8000/resume/analyze", {
+        res = await fetch("https://internbro.onrender.com/resume/analyze", {
           method: "POST",
           headers: {
             "Authorization": `Bearer ${token}`
@@ -210,7 +210,7 @@ export default function AICareerAssistant() {
         const mockFile = new File([fileBlob], "resume_text.docx", { type: 'application/vnd.openxmlformats-officedocument.wordprocessingml.document' });
         const formData = new FormData();
         formData.append("file", mockFile);
-        res = await fetch("http://localhost:8000/resume/analyze", {
+        res = await fetch("https://internbro.onrender.com/resume/analyze", {
           method: "POST",
           headers: {
             "Authorization": `Bearer ${token}`

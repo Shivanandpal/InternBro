@@ -59,9 +59,9 @@ export default function AddInternship() {
 
     try {
       const token = localStorage.getItem('token');
-      const res = await fetch(`http://localhost:8000/internships/`, {
+      const res = await fetch(`https://internbro.onrender.com/internships/`, {
         method: 'POST',
-        headers: { 
+        headers: {
           'Content-Type': 'application/json',
           'Authorization': `Bearer ${token}`
         },
@@ -84,7 +84,7 @@ export default function AddInternship() {
       }
     } catch (err) {
       console.warn("Backend down. Saving internship listing to localStorage.");
-      
+
       // Save locally
       const localJobs = JSON.parse(localStorage.getItem('internbro_jobs') || '[]');
       const newJob = {
@@ -94,7 +94,7 @@ export default function AddInternship() {
       };
       localJobs.push(newJob);
       localStorage.setItem('internbro_jobs', JSON.stringify(localJobs));
-      
+
       // Also register this action in the simulated Admin Activity log
       const localActivities = JSON.parse(localStorage.getItem('internbro_activities') || '[]');
       localActivities.unshift({
@@ -144,7 +144,7 @@ export default function AddInternship() {
   return (
     <div className="page-transition min-h-screen bg-gray-50 dark:bg-darkBg text-gray-900 dark:text-gray-100 transition-colors duration-300 py-10">
       <div className="max-w-3xl mx-auto px-4">
-        
+
         {/* Back Link */}
         <button
           onClick={() => navigate(-1)}
@@ -173,7 +173,7 @@ export default function AddInternship() {
           </div>
 
           <form onSubmit={handleSubmit} className="space-y-6">
-            
+
             {/* Row 1 */}
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
               <div className="space-y-1.5">

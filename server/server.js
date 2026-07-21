@@ -33,7 +33,7 @@ app.get('/api/jobs', async (req, res) => {
   try {
     const { status, type, search, postedBy } = req.query;
     let query = {};
-    
+
     if (status) query.status = status;
     if (postedBy) query.postedBy = postedBy;
 
@@ -42,7 +42,7 @@ app.get('/api/jobs', async (req, res) => {
     // Dynamic text filtering
     if (search) {
       const q = search.toLowerCase();
-      jobs = jobs.filter(job => 
+      jobs = jobs.filter(job =>
         job.title.toLowerCase().includes(q) ||
         job.company.toLowerCase().includes(q) ||
         job.skillsRequired.some(s => s.toLowerCase().includes(q))
@@ -126,7 +126,7 @@ app.get('/api/applications', async (req, res) => {
   try {
     const { studentId, jobId, recruiterId } = req.query;
     let query = {};
-    
+
     if (studentId) query.studentId = studentId;
     if (jobId) query.jobId = jobId;
 
@@ -167,8 +167,8 @@ app.get('/api/applications', async (req, res) => {
 
     // If filtered by recruiter, check recruiterId, jobDetails.postedBy, or jobDetails.recruiter_id
     if (recruiterId) {
-      enrichedApps = enrichedApps.filter(app => 
-        app.recruiterId === recruiterId || 
+      enrichedApps = enrichedApps.filter(app =>
+        app.recruiterId === recruiterId ||
         (app.jobDetails && (app.jobDetails.postedBy === recruiterId || app.jobDetails.recruiter_id === recruiterId))
       );
     }
@@ -333,7 +333,7 @@ app.post('/api/discussions/:id/replies', async (req, res) => {
     }
     const disc = await db.discussions.find({ id: req.params.id });
     const realDisc = disc[0] || (await db.discussions.find({ _id: req.params.id }))[0];
-    
+
     if (!realDisc) return res.status(404).json({ message: "Discussion thread not found" });
 
     const replies = realDisc.replies || [];
@@ -374,7 +374,7 @@ app.get('/api/analytics', async (req, res) => {
     const approvedJobs = allJobs.filter(j => j.status === 'Approved');
     const pendingJobs = allJobs.filter(j => j.status === 'Pending');
     const allApps = await db.applications.find();
-    
+
     // Simulating user totals based on our data size + some active counts for display
     const studentsCount = 342;
     const recruitersCount = 48;

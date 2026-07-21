@@ -4,7 +4,7 @@ import { useAuth } from '../context/AuthContext';
 import { ArrowLeft, Briefcase, MapPin, Calendar, DollarSign, Send, Star, CheckCircle, Check, AlertTriangle } from 'lucide-react';
 import AuthModal from '../components/AuthModal';
 
-const API_BASE_URL = 'http://localhost:5000/api';
+const API_BASE_URL = 'https://internbro.onrender.com/api';
 
 export default function Details() {
   const { id } = useParams();
@@ -28,7 +28,7 @@ export default function Details() {
     setLoading(true);
     try {
       // 1. Try Python Neon Backend
-      const res = await fetch(`http://localhost:8000/internships/${id}`);
+      const res = await fetch(`https://internbro.onrender.com/internships/${id}`);
       if (res.ok) {
         const data = await res.json();
         const mappedData = {
@@ -60,7 +60,7 @@ export default function Details() {
       throw new Error("Not found on both backend APIs");
     } catch (err) {
       console.warn("Backend fetch failed. Checking local storage and mocks:", err);
-      
+
       const localJobs = JSON.parse(localStorage.getItem('internbro_jobs') || '[]');
       const foundLocal = localJobs.find(j => j.id === id || j._id === id);
       if (foundLocal) {
@@ -208,7 +208,7 @@ export default function Details() {
     setSubmittingApp(true);
     try {
       const skillsArray = customSkills.split(',').map(s => s.trim()).filter(Boolean);
-      
+
       const appPayload = {
         jobId: id,
         studentId: profile.uid,
@@ -272,7 +272,7 @@ export default function Details() {
   return (
     <div className="page-transition min-h-screen bg-gray-50 dark:bg-darkBg text-gray-900 dark:text-gray-100 transition-colors duration-300 py-10">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        
+
         {/* Back Link */}
         <Link to="/listings" className="inline-flex items-center space-x-1.5 text-sm font-semibold text-gray-500 hover:text-brand-500 dark:text-gray-400 transition-colors mb-8">
           <ArrowLeft className="w-4 h-4" />
@@ -281,10 +281,10 @@ export default function Details() {
 
         {/* Content layout */}
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-8 items-start">
-          
+
           {/* LEFT DETAILS COLUMN */}
           <div className="lg:col-span-2 space-y-8">
-            
+
             {/* Header description card */}
             <div className="bg-white dark:bg-darkCard border border-gray-200/50 dark:border-darkBorder/40 rounded-3xl p-6 sm:p-8 space-y-6">
               <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
@@ -304,11 +304,10 @@ export default function Details() {
                 <div className="flex space-x-2">
                   <button
                     onClick={handleSaveToggle}
-                    className={`px-4 py-2.5 rounded-xl border text-sm font-semibold flex items-center space-x-1.5 transition-all ${
-                      isSaved
-                        ? 'bg-amber-50 dark:bg-amber-950/20 text-amber-500 border-amber-200/50 dark:border-amber-900/30'
-                        : 'bg-white hover:bg-gray-50 dark:bg-darkBg dark:hover:bg-darkBorder/40 border-gray-200 dark:border-darkBorder text-gray-500 dark:text-gray-300'
-                    }`}
+                    className={`px-4 py-2.5 rounded-xl border text-sm font-semibold flex items-center space-x-1.5 transition-all ${isSaved
+                      ? 'bg-amber-50 dark:bg-amber-950/20 text-amber-500 border-amber-200/50 dark:border-amber-900/30'
+                      : 'bg-white hover:bg-gray-50 dark:bg-darkBg dark:hover:bg-darkBorder/40 border-gray-200 dark:border-darkBorder text-gray-500 dark:text-gray-300'
+                      }`}
                   >
                     <Star className={`w-4 h-4 ${isSaved ? 'fill-amber-500' : ''}`} />
                     <span>{isSaved ? 'Saved' : 'Save opportunity'}</span>
@@ -354,11 +353,11 @@ export default function Details() {
 
           {/* RIGHT OVERVIEW COLUMN */}
           <div className="space-y-6">
-            
+
             {/* Quick stats board */}
             <div className="bg-white dark:bg-darkCard border border-gray-200/50 dark:border-darkBorder/40 rounded-3xl p-6 space-y-6 shadow-sm">
               <h3 className="font-display font-bold text-base text-gray-900 dark:text-white border-b border-gray-100 dark:border-darkBorder/40 pb-3">Internship Overview</h3>
-              
+
               <div className="space-y-4">
                 <div className="flex items-center justify-between text-sm">
                   <span className="text-gray-400 flex items-center space-x-2">
@@ -457,7 +456,7 @@ export default function Details() {
       {applyModalOpen && (
         <div className="fixed inset-0 z-50 overflow-y-auto bg-black/60 backdrop-blur-sm flex items-center justify-center p-4">
           <div className="bg-white dark:bg-darkCard border border-gray-200 dark:border-darkBorder rounded-3xl shadow-xl w-full max-w-lg overflow-hidden animate-slide-up">
-            
+
             {/* Modal Header */}
             <div className="bg-gradient-to-r from-brand-600 to-violetAccent-500 p-6 text-white flex justify-between items-center">
               <div>
@@ -483,7 +482,7 @@ export default function Details() {
               </div>
             ) : (
               <form onSubmit={handleApplySubmit} className="p-6 space-y-5">
-                
+
                 {/* Profile review */}
                 <div className="p-4 bg-gray-50 dark:bg-darkBg rounded-2xl border border-gray-100 dark:border-darkBorder space-y-2">
                   <h4 className="text-xs font-bold text-gray-400 uppercase tracking-wider">Candidate Details</h4>

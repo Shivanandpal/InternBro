@@ -139,7 +139,7 @@ export default function AdminDashboard() {
 
     // 2. Fetch all jobs from Neon PostgreSQL Database (Python Backend)
     try {
-      const jobsRes = await fetch(`http://localhost:8000/internships/`);
+      const jobsRes = await fetch(`https://internbro.onrender.com/internships/`);
       if (jobsRes.ok) {
         const jobsData = await jobsRes.json();
         const mappedJobs = jobsData.map(j => ({
@@ -159,7 +159,7 @@ export default function AdminDashboard() {
     // 3. Fetch all users from Neon PostgreSQL Database (Python Backend)
     try {
       const token = localStorage.getItem('token');
-      const usersRes = await fetch(`http://localhost:8000/admin/users`, {
+      const usersRes = await fetch(`https://internbro.onrender.com/admin/users`, {
         headers: {
           'Authorization': `Bearer ${token}`
         }
@@ -286,7 +286,7 @@ export default function AdminDashboard() {
       return;
     }
     try {
-      const res = await fetch(`http://localhost:8000/internships/${jobId}/status`, {
+      const res = await fetch(`https://internbro.onrender.com/internships/${jobId}/status`, {
         method: 'PUT',
         headers: {
           'Content-Type': 'application/json',
@@ -313,7 +313,7 @@ export default function AdminDashboard() {
       }
     } catch (err) {
       console.error('handleModeration network error:', err);
-      alert(`❌ Network error — could not reach the backend server.\n\nMake sure the Python backend is running on http://localhost:8000.\n\nError: ${err.message}`);
+      alert(`❌ Network error — could not reach the backend server.\n\nMake sure the Python backend is running on https://internbro.onrender.com.\n\nError: ${err.message}`);
     }
   };
 
@@ -330,7 +330,7 @@ export default function AdminDashboard() {
           const token = localStorage.getItem('token');
           if (token) {
             try {
-              await fetch(`http://localhost:8000/applications/sync-status`, {
+              await fetch(`https://internbro.onrender.com/applications/sync-status`, {
                 method: 'PUT',
                 headers: {
                   'Content-Type': 'application/json',
@@ -590,8 +590,8 @@ export default function AdminDashboard() {
             <button
               onClick={() => setActiveTab('moderation')}
               className={`w-full flex items-center space-x-3 px-4 py-3 rounded-2xl text-sm font-semibold transition-all ${activeTab === 'moderation'
-                  ? 'bg-emerald-50 dark:bg-emerald-950/20 text-emerald-600 dark:text-emerald-400'
-                  : 'text-gray-500 hover:bg-gray-50 dark:hover:bg-darkBg hover:text-gray-900 dark:hover:text-white'
+                ? 'bg-emerald-50 dark:bg-emerald-950/20 text-emerald-600 dark:text-emerald-400'
+                : 'text-gray-500 hover:bg-gray-50 dark:hover:bg-darkBg hover:text-gray-900 dark:hover:text-white'
                 }`}
             >
               <ShieldAlert className="w-4 h-4" />
@@ -604,8 +604,8 @@ export default function AdminDashboard() {
             <button
               onClick={() => setActiveTab('listings')}
               className={`w-full flex items-center space-x-3 px-4 py-3 rounded-2xl text-sm font-semibold transition-all ${activeTab === 'listings'
-                  ? 'bg-emerald-50 dark:bg-emerald-950/20 text-emerald-600 dark:text-emerald-400'
-                  : 'text-gray-500 hover:bg-gray-50 dark:hover:bg-darkBg hover:text-gray-900 dark:hover:text-white'
+                ? 'bg-emerald-50 dark:bg-emerald-950/20 text-emerald-600 dark:text-emerald-400'
+                : 'text-gray-500 hover:bg-gray-50 dark:hover:bg-darkBg hover:text-gray-900 dark:hover:text-white'
                 }`}
             >
               <Briefcase className="w-4 h-4" />
@@ -619,8 +619,8 @@ export default function AdminDashboard() {
             <button
               onClick={() => setActiveTab('users-activity')}
               className={`w-full flex items-center space-x-3 px-4 py-3 rounded-2xl text-sm font-semibold transition-all ${activeTab === 'users-activity'
-                  ? 'bg-emerald-50 dark:bg-emerald-950/20 text-emerald-600 dark:text-emerald-400'
-                  : 'text-gray-500 hover:bg-gray-50 dark:hover:bg-darkBg hover:text-gray-900 dark:hover:text-white'
+                ? 'bg-emerald-50 dark:bg-emerald-950/20 text-emerald-600 dark:text-emerald-400'
+                : 'text-gray-500 hover:bg-gray-50 dark:hover:bg-darkBg hover:text-gray-900 dark:hover:text-white'
                 }`}
             >
               <Activity className="w-4 h-4" />
@@ -633,8 +633,8 @@ export default function AdminDashboard() {
             <button
               onClick={() => setActiveTab('total-users')}
               className={`w-full flex items-center space-x-3 px-4 py-3 rounded-2xl text-sm font-semibold transition-all ${activeTab === 'total-users'
-                  ? 'bg-emerald-50 dark:bg-emerald-950/20 text-emerald-600 dark:text-emerald-400'
-                  : 'text-gray-500 hover:bg-gray-50 dark:hover:bg-darkBg hover:text-gray-900 dark:hover:text-white'
+                ? 'bg-emerald-50 dark:bg-emerald-950/20 text-emerald-600 dark:text-emerald-400'
+                : 'text-gray-500 hover:bg-gray-50 dark:hover:bg-darkBg hover:text-gray-900 dark:hover:text-white'
                 }`}
             >
               <Users className="w-4 h-4" />
@@ -645,8 +645,8 @@ export default function AdminDashboard() {
             <button
               onClick={() => setActiveTab('assignments')}
               className={`w-full flex items-center space-x-3 px-4 py-3 rounded-2xl text-sm font-semibold transition-all ${activeTab === 'assignments'
-                  ? 'bg-emerald-50 dark:bg-emerald-950/20 text-emerald-600 dark:text-emerald-400'
-                  : 'text-gray-500 hover:bg-gray-50 dark:hover:bg-darkBg hover:text-gray-900 dark:hover:text-white'
+                ? 'bg-emerald-50 dark:bg-emerald-950/20 text-emerald-600 dark:text-emerald-400'
+                : 'text-gray-500 hover:bg-gray-50 dark:hover:bg-darkBg hover:text-gray-900 dark:hover:text-white'
                 }`}
             >
               <BookOpen className="w-4 h-4" />
@@ -831,8 +831,8 @@ export default function AdminDashboard() {
                               <div className="relative flex space-x-3">
                                 <div>
                                   <span className={`h-8 w-8 rounded-full flex items-center justify-center ring-8 ring-white dark:ring-darkCard ${act.role === 'admin' ? 'bg-emerald-100 text-emerald-600 dark:bg-emerald-950/40 dark:text-emerald-400' :
-                                      act.role === 'recruiter' ? 'bg-violetAccent-100 text-violetAccent-600 dark:bg-violetAccent-950/40 dark:text-violetAccent-400' :
-                                        'bg-brand-100 text-brand-600 dark:bg-brand-950/40 dark:text-brand-400'
+                                    act.role === 'recruiter' ? 'bg-violetAccent-100 text-violetAccent-600 dark:bg-violetAccent-950/40 dark:text-violetAccent-400' :
+                                      'bg-brand-100 text-brand-600 dark:bg-brand-950/40 dark:text-brand-400'
                                     }`}>
                                     {act.role === 'admin' ? <Shield className="w-4 h-4" /> :
                                       act.role === 'recruiter' ? <Briefcase className="w-4 h-4" /> :
@@ -912,8 +912,8 @@ export default function AdminDashboard() {
                           <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 border-b border-gray-100 dark:border-darkBorder/20 pb-3">
                             <div className="flex items-center space-x-3">
                               <div className={`w-11 h-11 rounded-full flex items-center justify-center font-bold text-sm ${isStudent ? 'bg-brand-100 text-brand-600 dark:bg-brand-950/30' :
-                                  u.role?.toLowerCase() === 'recruiter' ? 'bg-violetAccent-100 text-violetAccent-600 dark:bg-violetAccent-950/30' :
-                                    'bg-emerald-100 text-emerald-600 dark:bg-emerald-950/30'
+                                u.role?.toLowerCase() === 'recruiter' ? 'bg-violetAccent-100 text-violetAccent-600 dark:bg-violetAccent-950/30' :
+                                  'bg-emerald-100 text-emerald-600 dark:bg-emerald-950/30'
                                 }`}>
                                 {u.name ? u.name.charAt(0) : 'U'}
                               </div>
@@ -991,8 +991,8 @@ export default function AdminDashboard() {
                                         </p>
                                         <div className="flex items-center justify-between gap-2 mt-1">
                                           <span className={`text-[10px] font-extrabold uppercase px-2 py-0.5 rounded ${app.status === 'Shortlisted' ? 'bg-emerald-50 dark:bg-emerald-950/20 text-emerald-600 dark:text-emerald-400' :
-                                              app.status === 'Rejected' ? 'bg-red-50 dark:bg-red-950/20 text-red-600 dark:text-red-400' :
-                                                'bg-amber-50 dark:bg-amber-950/20 text-amber-600 dark:text-amber-400'
+                                            app.status === 'Rejected' ? 'bg-red-50 dark:bg-red-950/20 text-red-600 dark:text-red-400' :
+                                              'bg-amber-50 dark:bg-amber-950/20 text-amber-600 dark:text-amber-400'
                                             }`}>
                                             {app.status}
                                           </span>
