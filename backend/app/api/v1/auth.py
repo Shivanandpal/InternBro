@@ -162,5 +162,5 @@ def google_callback(code: str, db: Session = Depends(get_db)):
     )
     
     # Redirect back to client login page with JWT
-    frontend_url = f"https://internbro.onrender.com/login?token={jwt_token}"
+    frontend_url = f"https://intern-bro-09.vercel.app/login?token={jwt_token}"
     return RedirectResponse(url=frontend_url)
