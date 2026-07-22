@@ -1,6 +1,3 @@
-import numpy as np
-
-
 class VectorStore:
 
     def __init__(self):
@@ -15,18 +12,17 @@ class VectorStore:
         if not self.embeddings or not self.documents:
             return []
         
-        # Compute L2 distances
-        query_vec = np.array(embedding)
-        store_vecs = np.array(self.embeddings)
-        
-        # Euclidean distance (L2 norm)
-        distances = np.linalg.norm(store_vecs - query_vec, axis=1)
-        
+        # Pure-Python Euclidean distance (L2 norm)
+        distances = []
+        for idx, doc_emb in enumerate(self.embeddings):
+            sum_sq = sum((x - y) ** 2 for x, y in zip(doc_emb, embedding))
+            distances.append((sum_sq ** 0.5, idx))
+            
         # Sort indices by distance ascending
-        sorted_indices = np.argsort(distances)
+        distances.sort(key=lambda x: x[0])
         
         return [
-            self.documents[i]
-            for i in sorted_indices[:k]
-            if i < len(self.documents)
+            self.documents[idx]
+            for _, idx in distances[:k]
+            if idx < len(self.documents)
         ]

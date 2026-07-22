@@ -106,7 +106,7 @@ export const AuthProvider = ({ children }) => {
   const updateProfile = async (updatedPayload) => {
     if (!user) return false;
     try {
-      const res = await fetch(`https://internbro.onrender.com/api/users/${user.student_id}`, {
+      const res = await fetch(`https://internbro.onrender.com/api/users/${user.id}`, {
         method: "PUT",
         headers: {
           "Content-Type": "application/json"
