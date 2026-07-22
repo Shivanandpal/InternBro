@@ -15,6 +15,7 @@ from app.api.v1.resume import router as resume_router
 from app.api.v1.match import router as match_router
 from app.api.v1.chat import router as chat_router
 from app.api.v1.payment import router as payment_router
+from app.api.v1.users import router as users_router
 
 from app.models.user import User
 from app.models.internship import Internship
@@ -359,6 +360,7 @@ app.include_router(resume_router)
 app.include_router(match_router)
 app.include_router(chat_router)
 app.include_router(payment_router)
+app.include_router(users_router)
 
 
 app.include_router(auth_router)
