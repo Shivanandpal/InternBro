@@ -63,7 +63,7 @@ export default function StudentDashboard() {
         {
           id: "sub-1",
           assignmentId: "assign-1",
-          studentId: profile?.uid || user?.uid || 'student-uid-123',
+          studentId: profile?.id || user?.id || 'student-uid-123',
           studentName: profile?.name || user?.name || 'Raj Sharma',
           studentEmail: user?.email || 'raj.student@internbro.com',
           codeFileName: "AppForm.jsx",
@@ -124,7 +124,7 @@ export default function StudentDashboard() {
     const newSub = {
       id: 'sub-' + Date.now(),
       assignmentId: assignId,
-      studentId: profile?.uid || user?.uid || 'student-uid-123',
+      studentId: profile?.id || user?.id || 'student-uid-123',
       studentName: profile?.name || user?.name || 'Raj Sharma',
       studentEmail: user?.email || 'raj.student@internbro.com',
       codeFileName: codeFileProps.name,
@@ -1408,7 +1408,7 @@ export default function StudentDashboard() {
                 ) : (
                   <div className="space-y-6">
                     {allAssignments.map((assign) => {
-                      const sub = allSubmissions.find(s => s.assignmentId === assign.id && s.studentId === (profile?.uid || user?.uid || 'student-uid-123'));
+                      const sub = allSubmissions.find(s => s.assignmentId === assign.id && s.studentId === (profile?.id || user?.id || 'student-uid-123'));
                       const isGraded = sub?.status === 'Graded';
 
                       return (

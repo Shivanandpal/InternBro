@@ -155,7 +155,7 @@ export default function Details() {
   const checkApplicationStatus = async () => {
     if (!profile) return;
     try {
-      const res = await fetch(`${API_BASE_URL}/applications?studentId=${profile.uid}&jobId=${id}`);
+      const res = await fetch(`${API_BASE_URL}/applications?studentId=${profile.id}&jobId=${id}`);
       if (res.ok) {
         const data = await res.json();
         if (data.length > 0) {
