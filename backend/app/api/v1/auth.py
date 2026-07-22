@@ -84,10 +84,11 @@ def me(current_user=Depends(get_current_user)):
 @router.get("/google")
 def google_login():
     # If client ID is missing, provide a local mock callback redirect for verification ease
+    #resolving
     if not settings.GOOGLE_CLIENT_ID:
         print("GOOGLE AUTH INFO: Google Client ID missing. Generating mock Google callback redirection.")
         # Redirect to callback with a mock authorization code
-        mock_callback_url = f"http://localhost:8000/auth/google/callback?code=mock_google_code_123"
+        mock_callback_url = f"https://internbro.onrender.com/auth/google/callback?code=mock_google_code_123"
         return RedirectResponse(url=mock_callback_url)
         
     google_auth_url = (
@@ -161,5 +162,5 @@ def google_callback(code: str, db: Session = Depends(get_db)):
     )
     
     # Redirect back to client login page with JWT
-    frontend_url = f"http://localhost:8080/login?token={jwt_token}"
-    return RedirectResponse(url=frontend_url)
+    frontend_url = f"https://internbro.onrender.com/login?token={jwt_token}"
+    return RedirectResponse(url=frontend_url)
