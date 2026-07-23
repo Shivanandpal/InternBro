@@ -51,8 +51,7 @@ def get_applications(
     studentId: str | None = None,
     recruiterId: str | None = None,
     jobId: str | None = None,
-    db: Session = Depends(get_db),
-    current_user=Depends(get_current_user)
+    db: Session = Depends(get_db)
 ):
     from app.models.application import Application
     from app.models.internship import Internship

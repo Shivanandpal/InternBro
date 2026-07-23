@@ -155,7 +155,11 @@ export default function Details() {
   const checkApplicationStatus = async () => {
     if (!profile) return;
     try {
-      const res = await fetch(`${API_BASE_URL}/applications?studentId=${profile.id}&jobId=${id}`);
+      const res = await fetch(`${API_BASE_URL}/applications?studentId=${profile.id}&jobId=${id}`, {
+        headers: {
+          'Authorization': `Bearer ${localStorage.getItem("token")}`
+        }
+      });
       if (res.ok) {
         const data = await res.json();
         if (data.length > 0) {
@@ -231,7 +235,7 @@ export default function Details() {
         }, 1500);
       } else {
         const err = await res.json();
-        alert(err.message || "Failed to submit application.");
+        alert(err.message || err.detail || "Failed to submit application.");
       }
     } catch (err) {
       console.warn("Backend server down. Simulating successful application submitting locally.");

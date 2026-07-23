@@ -58,7 +58,11 @@ export default function RecruiterDashboard() {
 
       // 2. Fetch candidates who applied to these jobs
       const recruiterId = profile?.uid || user.id;
-      const appRes = await fetch(`${API_BASE_URL}/applications?recruiterId=${recruiterId}`);
+      const appRes = await fetch(`${API_BASE_URL}/applications?recruiterId=${recruiterId}`, {
+        headers: {
+          'Authorization': `Bearer ${localStorage.getItem("token")}`
+        }
+      });
       if (appRes.ok) {
         const appData = await appRes.json();
         setApplicants(appData);

@@ -189,7 +189,11 @@ export default function AdminDashboard() {
 
     // 4. Fetch all applications
     try {
-      const appsRes = await fetch(`${API_BASE_URL}/applications`);
+      const appsRes = await fetch(`${API_BASE_URL}/applications`, {
+        headers: {
+          'Authorization': `Bearer ${localStorage.getItem("token")}`
+        }
+      });
       if (appsRes.ok) {
         const appsData = await appsRes.json();
         setApplications(appsData);
