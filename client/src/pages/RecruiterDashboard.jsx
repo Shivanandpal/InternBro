@@ -242,7 +242,10 @@ export default function RecruiterDashboard() {
     try {
       const res = await fetch(`${API_BASE_URL}/applications/${appId}`, {
         method: 'PUT',
-        headers: { 'Content-Type': 'application/json' },
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${localStorage.getItem("token")}`
+        },
         body: JSON.stringify({ status: newStatus })
       });
       if (res.ok) {

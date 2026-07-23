@@ -1,6 +1,7 @@
 from fastapi import APIRouter, Depends, HTTPException
 from sqlalchemy.orm import Session
 from datetime import datetime
+from pydantic import BaseModel
 
 from app.db.database import get_db
 from app.dependencies.roles import require_roles
@@ -159,6 +160,28 @@ def update_status(
     except ValueError as e:
         raise HTTPException(
             status_code=404,
+            detail=str(e),
+        )
+
+class ApplicationStatusUpdateBody(BaseModel):
+    status: str
+
+@router.put("/{application_id}")
+def update_status_legacy(
+    application_id: str,
+    data: ApplicationStatusUpdateBody,
+    db: Session = Depends(get_db)
+):
+    try:
+        status_enum = ApplicationStatus[data.status.upper()]
+        return ApplicationService.update_status(
+            db,
+            application_id,
+            status_enum,
+        )
+    except Exception as e:
+        raise HTTPException(
+            status_code=400,
             detail=str(e),
         )
 
