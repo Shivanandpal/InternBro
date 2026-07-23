@@ -209,16 +209,42 @@ export default function Details() {
     try {
       const skillsArray = customSkills.split(',').map(s => s.trim()).filter(Boolean);
 
-      const appPayload = {
-        internship_id: id,
-        cover_letter: coverLetter,
-        resume_url: resumeUrl,
+      // 1. Submit to FastAPI backend (Postgres)
+      const token = localStorage.getItem("token");
+      if (token) {
+        try {
+          await fetch(`https://internbro.onrender.com/applications`, {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json',
+              'Authorization': `Bearer ${token}`
+            },
+            body: JSON.stringify({
+              internship_id: id,
+              cover_letter: coverNote,
+              resume_url: resumeUrl,
+            })
+          });
+        } catch (err) {
+          console.warn("FastAPI application submission error:", err);
+        }
+      }
+
+      // 2. Submit to Express backend (MongoDB - primary storage for dashboards)
+      const expressPayload = {
+        jobId: id,
+        studentId: profile.uid || user.id,
+        studentName: profile.name || user.name,
+        studentEmail: profile.email || user.email,
+        resumeUrl: resumeUrl,
+        skills: skillsArray,
+        recruiterId: job?.recruiter_id || job?.postedBy || '',
       };
 
       const res = await fetch(`${API_BASE_URL}/applications`, {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${localStorage.getItem("token")}` },
-        body: JSON.stringify(appPayload)
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(expressPayload)
       });
 
       if (res.ok) {

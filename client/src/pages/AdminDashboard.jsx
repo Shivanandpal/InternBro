@@ -189,7 +189,7 @@ export default function AdminDashboard() {
 
     // 4. Fetch all applications
     try {
-      const appsRes = await fetch(`${API_BASE_URL}/applications/my`);
+      const appsRes = await fetch(`${API_BASE_URL}/applications`);
       if (appsRes.ok) {
         const appsData = await appsRes.json();
         setApplications(appsData);
