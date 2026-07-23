@@ -330,7 +330,7 @@ export default function AdminDashboard() {
           const token = localStorage.getItem('token');
           if (token) {
             try {
-              await fetch(`https://internbro.onrender.com/applications/sync-status`, {
+              await fetch(`https://internbro.onrender.com/api/applications/sync-status`, {
                 method: 'PUT',
                 headers: {
                   'Content-Type': 'application/json',

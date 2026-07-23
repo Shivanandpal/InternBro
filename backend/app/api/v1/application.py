@@ -1,8 +1,10 @@
 from fastapi import APIRouter, Depends, HTTPException
 from sqlalchemy.orm import Session
+from datetime import datetime
 
 from app.db.database import get_db
 from app.dependencies.roles import require_roles
+from app.dependencies.auth import get_current_user
 from app.models.user import Role
 from app.models.application import ApplicationStatus
 from app.schemas.application import (
@@ -42,6 +44,63 @@ def apply(
             status_code=400,
             detail=str(e),
         )
+
+
+@router.get("/")
+def get_applications(
+    studentId: str | None = None,
+    recruiterId: str | None = None,
+    jobId: str | None = None,
+    db: Session = Depends(get_db),
+    current_user=Depends(get_current_user)
+):
+    from app.models.application import Application
+    from app.models.internship import Internship
+    from app.models.user import User
+
+    query = db.query(Application)
+
+    if studentId:
+        query = query.filter(Application.student_id == studentId)
+    if jobId:
+        query = query.filter(Application.internship_id == jobId)
+    if recruiterId:
+        query = query.filter(Application.internship_id == Internship.id).filter(Internship.recruiter_id == recruiterId)
+
+    applications = query.all()
+    results = []
+
+    for app in applications:
+        internship = db.query(Internship).filter(Internship.id == app.internship_id).first()
+        job_details = {}
+        if internship:
+            job_details = {
+                "id": internship.id,
+                "title": internship.title,
+                "company": internship.company,
+                "location": internship.location,
+                "stipend": internship.stipend,
+                "duration": internship.duration
+            }
+
+        student = db.query(User).filter(User.id == app.student_id).first()
+        student_name = student.name if student else "Unknown Student"
+        student_email = student.email if student else ""
+
+        results.append({
+            "id": app.id,
+            "jobId": app.internship_id,
+            "studentId": app.student_id,
+            "studentName": student_name,
+            "studentEmail": student_email,
+            "resumeUrl": app.resume_url,
+            "skills": [],
+            "status": app.status.value if hasattr(app.status, "value") else app.status,
+            "appliedAt": app.applied_at.isoformat() if app.applied_at else datetime.now().isoformat(),
+            "jobDetails": job_details
+        })
+
+    return results
 
 
 @router.get(
