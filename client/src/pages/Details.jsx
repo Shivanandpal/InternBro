@@ -210,18 +210,14 @@ export default function Details() {
       const skillsArray = customSkills.split(',').map(s => s.trim()).filter(Boolean);
 
       const appPayload = {
-        jobId: id,
-        studentId: profile.uid,
-        studentName: profile.name,
-        studentEmail: profile.email,
-        resumeUrl: resumeUrl || 'https://internbro-resumes.s3.amazonaws.com/mock-resume-pdf.pdf',
-        skills: skillsArray,
-        recruiterId: job.recruiter_id || job.postedBy || ''
+        internship_id: id,
+        cover_letter: coverLetter,
+        resume_url: resumeUrl,
       };
 
       const res = await fetch(`${API_BASE_URL}/applications`, {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
+        headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${localStorage.getItem("token")}` },
         body: JSON.stringify(appPayload)
       });
 
