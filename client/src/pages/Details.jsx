@@ -4,7 +4,7 @@ import { useAuth } from '../context/AuthContext';
 import { ArrowLeft, Briefcase, MapPin, Calendar, DollarSign, Send, Star, CheckCircle, Check, AlertTriangle } from 'lucide-react';
 import AuthModal from '../components/AuthModal';
 
-const API_BASE_URL = 'https://internbro.onrender.com/api';
+const API_BASE_URL = 'https://internbro.onrender.com';
 
 export default function Details() {
   const { id } = useParams();
