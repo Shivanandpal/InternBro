@@ -203,7 +203,7 @@ export default function StudentDashboard() {
     setLoadingApps(true);
     try {
       // 1. Fetch applied internships
-      const appRes = await fetch(`${API_BASE_URL}/applications?studentId=${profile.uid}`);
+      const appRes = await fetch(`${API_BASE_URL}/applications?studentId=${profile.id}`);
       if (appRes.ok) {
         const appData = await appRes.json();
         setApplications(appData);
