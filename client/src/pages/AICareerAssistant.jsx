@@ -6,6 +6,21 @@ import * as authAPI from '../api/auth';
 
 const API_BASE_URL = 'https://internbro.onrender.com/api';
 
+const loadScript = (src) => {
+  return new Promise((resolve, reject) => {
+    if (document.querySelector(`script[src="${src}"]`)) {
+      resolve();
+      return;
+    }
+    const script = document.createElement("script");
+    script.src = src;
+    script.onload = () => resolve();
+    script.onerror = (err) => reject(err);
+    document.body.appendChild(script);
+  });
+};
+
+
 export default function AICareerAssistant() {
   const { user, setUser, profile, updateProfile } = useAuth();
   const navigate = useNavigate();
@@ -149,7 +164,7 @@ export default function AICareerAssistant() {
   const [previewTemplateId, setPreviewTemplateId] = useState(null);
   const [downloadModalOpen, setDownloadModalOpen] = useState(false);
   const [downloading, setDownloading] = useState(false);
-  const [downloadFormat, setDownloadFormat] = useState('pdf'); // 'pdf' | 'png'
+  const [downloadFormat, setDownloadFormat] = useState(null); // 'pdf' | 'png'
 
   useEffect(() => {
     window.scrollTo(0, 0);
@@ -525,7 +540,7 @@ export default function AICareerAssistant() {
     }
   };
 
-  const triggerDownload = (format) => {
+  const triggerDownload = async (format) => {
     const isPremium = selectedTemplate !== 'classic';
     const isPurchased = purchasedTemplates.includes(selectedTemplate) || purchasedTemplates.includes('premium_all');
 
@@ -545,23 +560,52 @@ export default function AICareerAssistant() {
     setDownloadFormat(format);
     setDownloading(true);
 
-    setTimeout(() => {
-      const element = document.createElement("a");
-      let fileContent = `InternBRO Professional CV\n=========================\n\nCandidate: ${cvName}\nRole: ${cvTitle}\nEmail: ${cvEmail}\nSkills: ${cvSkills}\nBio: ${cvBio}\n\nEducation:\n- ${cvEduSchool} &bull; ${cvEduDegree} &bull; Year: ${cvEduYear}\n\nProject Work:\n- ${cvProjTitle}: ${cvProjDesc}\n\nFormat: Vector Export (ATS-friendly) / Generated via InternBRO Resume Engine\n`;
-      let mimeType = format === 'pdf' ? 'application/pdf' : 'image/png';
-      let extension = format === 'pdf' ? '.pdf' : '.png';
+    try {
+      // Load html2pdf bundle (includes html2canvas and jspdf)
+      await loadScript("https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js");
+      
+      const element = document.getElementById("resume-preview-container");
+      if (!element) {
+        throw new Error("Preview container element not found");
+      }
 
-      const file = new Blob([fileContent], { type: mimeType });
-      element.href = URL.createObjectURL(file);
-      element.download = `${cvName.replace(/\s+/g, '_')}_Resume_${selectedTemplate}${extension}`;
-      document.body.appendChild(element);
-      element.click();
-      document.body.removeChild(element);
+      // Use the inner wrapper element if present to avoid extra container borders
+      const targetElement = element.firstElementChild || element;
+      const sanitizedName = (cvName || 'Resume').replace(/\s+/g, '_');
+      const fileName = `${sanitizedName}_Resume_${selectedTemplate}`;
 
+      if (format === 'pdf') {
+        const opt = {
+          margin:       0,
+          filename:     `${fileName}.pdf`,
+          image:        { type: 'jpeg', quality: 0.98 },
+          html2canvas:  { scale: 2.5, useCORS: true, logging: false },
+          jsPDF:        { unit: 'in', format: 'a4', orientation: 'portrait' }
+        };
+        await window.html2pdf().set(opt).from(targetElement).save();
+      } else {
+        const canvas = await window.html2canvas(targetElement, {
+          useCORS: true,
+          scale: 2.5,
+          logging: false
+        });
+        const dataUrl = canvas.toDataURL("image/png");
+        const link = document.createElement("a");
+        link.download = `${fileName}.png`;
+        link.href = dataUrl;
+        document.body.appendChild(link);
+        link.click();
+        document.body.removeChild(link);
+      }
+
+      alert(`Resume successfully downloaded as ${format.toUpperCase()}!`);
+    } catch (err) {
+      console.error(err);
+      alert("Failed to generate and download resume. Please try again.");
+    } finally {
       setDownloading(false);
       setDownloadModalOpen(false);
-      alert(`Resume successfully downloaded as ${format.toUpperCase()}!`);
-    }, 2000);
+    }
   };
 
   const renderTemplate = () => {
@@ -1487,7 +1531,9 @@ export default function AICareerAssistant() {
                     </div>
                   </div>
                 ) : (
-                  renderTemplate()
+                  <div id="resume-preview-container">
+                    {renderTemplate()}
+                  </div>
                 )}
               </div>
             </div>
