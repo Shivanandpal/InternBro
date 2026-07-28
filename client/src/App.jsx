@@ -4,7 +4,7 @@ import { AuthProvider } from './context/AuthContext';
 import Navbar from './components/Navbar';
 import AdminNavbar from './components/AdminNavbar';
 import Footer from './components/Footer';
-import { StudentRoute, AdminRoute } from './components/ProtectedRoute';
+import { StudentRoute, AdminRoute, RecruiterRoute } from './components/ProtectedRoute';
 
 // Pages
 import Home from './pages/Home';
@@ -48,8 +48,8 @@ function AppLayout() {
 
           {/* ── Protected student routes ── */}
           <Route path="/student-dashboard"  element={<StudentRoute><StudentDashboard /></StudentRoute>} />
-          <Route path="/recruiter-dashboard" element={<StudentRoute><RecruiterDashboard /></StudentRoute>} />
-          <Route path="/add-internship"     element={<StudentRoute><AddInternship /></StudentRoute>} />
+          <Route path="/recruiter-dashboard" element={<RecruiterRoute><RecruiterDashboard /></RecruiterRoute>} />
+          <Route path="/add-internship"     element={<RecruiterRoute><AddInternship /></RecruiterRoute>} />
 
           {/* ── Protected admin routes ── */}
           <Route path="/admin-dashboard" element={<AdminRoute><AdminDashboard /></AdminRoute>} />

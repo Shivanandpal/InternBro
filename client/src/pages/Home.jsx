@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
 import { Rocket, Briefcase, Users, Building, ChevronRight, Star, ChevronDown, CheckCircle2, Zap } from 'lucide-react';
+import { useAuth } from '../context/AuthContext';
 import StatCard from '../components/StatCard';
 import InternshipCard from '../components/InternshipCard';
 
@@ -8,6 +9,7 @@ const API_BASE_URL = 'https://internbro.onrender.com/api';
 
 export default function Home() {
   const navigate = useNavigate();
+  const { user } = useAuth();
   const [searchQuery, setSearchQuery] = useState('');
   const [featuredJobs, setFeaturedJobs] = useState([]);
   const [faqOpen, setFaqOpen] = useState({});
@@ -266,7 +268,13 @@ export default function Home() {
               <p className="text-brand-100 text-sm max-w-sm">Build your profile, analyze your resume, and let our AI recommendations guide you to top tech, design, and product internships.</p>
             </div>
             <button
-              onClick={() => navigate('/student-dashboard')}
+              onClick={() => {
+                if (user && user.role?.toUpperCase() === 'RECRUITER') {
+                  navigate('/recruiter-dashboard');
+                } else {
+                  navigate('/student-dashboard');
+                }
+              }}
               className="w-max px-6 py-3 bg-white text-brand-600 font-semibold rounded-xl text-sm shadow-md hover:bg-brand-50 transition-all z-10 flex items-center space-x-1"
             >
               <span>Student Profile Portal</span>
@@ -282,7 +290,13 @@ export default function Home() {
               <p className="text-violetAccent-100 text-sm max-w-sm">Post your internship listings, view applicants with high-quality AI match scores, and shortlist talent in clicks.</p>
             </div>
             <button
-              onClick={() => navigate('/recruiter-dashboard')}
+              onClick={() => {
+                if (user && user.role?.toUpperCase() === 'STUDENT') {
+                  navigate('/student-dashboard');
+                } else {
+                  navigate('/recruiter-dashboard');
+                }
+              }}
               className="w-max px-6 py-3 bg-white text-violetAccent-600 font-semibold rounded-xl text-sm shadow-md hover:bg-violetAccent-50 transition-all z-10 flex items-center space-x-1"
             >
               <span>Recruiter Dashboard</span>
