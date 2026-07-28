@@ -18,10 +18,95 @@ from app.models.user import Role
 from app.ai.resume_parser import ResumeParser
 from app.ai.gemini_service import GeminiService
 
+import csv
+import ast
+import re
+
 router = APIRouter(
     prefix="/resume",
     tags=["Resume"]
 )
+
+def clean_tokens(text: str):
+    return set(re.findall(r'[a-z0-9]+', text.lower()))
+
+@router.get("/suggest-skills")
+def suggest_skills(role: str, company: str = ""):
+    if not role:
+        raise HTTPException(status_code=400, detail="Role parameter is required.")
+        
+    query_tokens = clean_tokens(role + " " + company)
+    if not query_tokens:
+        return {"skills": [], "matchedTitle": ""}
+        
+    best_match_skills = []
+    best_match_title = ""
+    max_similarity = -1.0
+    
+    # Use relative path from root directory of backend
+    filepath = "app/data/dataset.csv"
+    try:
+        with open(filepath, mode="r", encoding="utf-8") as f:
+            reader = csv.DictReader(f)
+            for row in reader:
+                title = row.get("job_title", "")
+                category = row.get("category", "")
+                
+                row_tokens = clean_tokens(title + " " + category)
+                if not row_tokens:
+                    continue
+                    
+                intersection = len(query_tokens.intersection(row_tokens))
+                union = len(query_tokens.union(row_tokens))
+                similarity = intersection / union
+                
+                if similarity > max_similarity:
+                    max_similarity = similarity
+                    try:
+                        skills_raw = row.get("job_skill_set", "[]")
+                        skills_list = ast.literal_eval(skills_raw)
+                        if isinstance(skills_list, list):
+                            best_match_skills = skills_list
+                        else:
+                            best_match_skills = [s.strip() for s in skills_raw.replace("[", "").replace("]", "").replace("'", "").split(",")]
+                    except Exception:
+                        best_match_skills = []
+                    best_match_title = title
+    except FileNotFoundError:
+        import os
+        alt_path = os.path.join(os.path.dirname(__file__), "..", "data", "dataset.csv")
+        try:
+            with open(alt_path, mode="r", encoding="utf-8") as f:
+                reader = csv.DictReader(f)
+                for row in reader:
+                    title = row.get("job_title", "")
+                    category = row.get("category", "")
+                    
+                    row_tokens = clean_tokens(title + " " + category)
+                    if not row_tokens:
+                        continue
+                        
+                    intersection = len(query_tokens.intersection(row_tokens))
+                    union = len(query_tokens.union(row_tokens))
+                    similarity = intersection / union
+                    
+                    if similarity > max_similarity:
+                        max_similarity = similarity
+                        try:
+                            skills_raw = row.get("job_skill_set", "[]")
+                            skills_list = ast.literal_eval(skills_raw)
+                            if isinstance(skills_list, list):
+                                best_match_skills = skills_list
+                            else:
+                                best_match_skills = [s.strip() for s in skills_raw.replace("[", "").replace("]", "").replace("'", "").split(",")]
+                        except Exception:
+                            best_match_skills = []
+                        best_match_title = title
+        except Exception as e:
+            raise HTTPException(status_code=500, detail=f"Dataset file error: {str(e)}")
+            
+    return {"skills": best_match_skills, "matchedTitle": best_match_title}
+
 
 
 @router.post("/analyze")

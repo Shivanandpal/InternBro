@@ -608,6 +608,33 @@ export default function AICareerAssistant() {
     }
   };
 
+  const handleAutoSuggestSkills = async () => {
+    if (!cvTitle.trim()) {
+      alert("Please enter a Target Position Title first.");
+      return;
+    }
+    const backendUrl = window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1'
+      ? 'http://localhost:8000'
+      : 'https://internbro.onrender.com';
+      
+    try {
+      const response = await fetch(`${backendUrl}/resume/suggest-skills?role=${encodeURIComponent(cvTitle)}`);
+      if (response.ok) {
+        const data = await response.json();
+        if (data.skills && data.skills.length > 0) {
+          setCvSkills(data.skills.join(', '));
+        } else {
+          alert("Could not suggest skills for this role. Try a different role title.");
+        }
+      } else {
+        alert("Failed to get skill suggestions from server.");
+      }
+    } catch (err) {
+      console.error(err);
+      alert("Error contacting the backend server for suggestions.");
+    }
+  };
+
   const renderTemplate = () => {
     switch (selectedTemplate) {
       case 'tech':
@@ -1293,7 +1320,18 @@ export default function AICareerAssistant() {
                 </div>
 
                 <div className="space-y-1.5">
-                  <label className="text-xs font-bold text-gray-400 uppercase tracking-wider block">Core Skills (separated by commas)</label>
+                  <div className="flex justify-between items-center">
+                    <label className="text-xs font-bold text-gray-400 uppercase tracking-wider block">Core Skills (separated by commas)</label>
+                    {cvTitle && (
+                      <button
+                        type="button"
+                        onClick={handleAutoSuggestSkills}
+                        className="text-[10px] text-brand-600 dark:text-brand-400 hover:text-brand-700 dark:hover:text-brand-300 font-bold hover:underline transition-all flex items-center space-x-1"
+                      >
+                        <span>⚡ Auto-Suggest Skills</span>
+                      </button>
+                    )}
+                  </div>
                   <input
                     type="text"
                     value={cvSkills}
