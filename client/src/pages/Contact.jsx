@@ -6,7 +6,7 @@ export default function Contact() {
   const [email, setEmail] = useState('');
   const [subject, setSubject] = useState('');
   const [message, setMessage] = useState('');
-  
+
   const [submitting, setSubmitting] = useState(false);
   const [submittedLogs, setSubmittedLogs] = useState([]);
   const [showSuccess, setShowSuccess] = useState(false);
@@ -27,7 +27,7 @@ export default function Contact() {
       setSubmittedLogs(prev => [logEntry, ...prev]);
       setSubmitting(false);
       setShowSuccess(true);
-      
+
       // Clear fields
       setName('');
       setEmail('');
@@ -45,11 +45,11 @@ export default function Contact() {
       <div className="glow-blob w-[300px] h-[300px] bg-brand-500 top-[20%] left-[-100px]"></div>
 
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        
+
         {/* Title */}
         <div className="text-center max-w-3xl mx-auto mb-16 space-y-4">
           <h1 className="font-display font-extrabold text-4xl sm:text-5xl dark:text-white leading-tight">
-            We'd Love To <br/>
+            We'd Love To <br />
             <span className="bg-gradient-to-r from-brand-600 to-violetAccent-500 bg-clip-text text-transparent">
               Hear From You
             </span>
@@ -61,7 +61,7 @@ export default function Contact() {
 
         {/* Core Layout Grid */}
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-8 mb-16">
-          
+
           {/* LEFT COLUMN: CONTACT DETAILS CARDS */}
           <div className="space-y-6">
             <div className="bg-white dark:bg-darkCard border border-gray-200/50 dark:border-darkBorder/40 rounded-2xl p-6 flex items-center space-x-4 shadow-sm hover-card">
@@ -80,7 +80,7 @@ export default function Contact() {
               </div>
               <div>
                 <h4 className="font-bold text-sm text-gray-800 dark:text-gray-200">Call Support</h4>
-                <p className="text-xs text-gray-400 mt-0.5">+1 (555) 019-2834</p>
+                <p className="text-xs text-gray-400 mt-0.5">+91 74******18</p>
               </div>
             </div>
 
@@ -90,7 +90,7 @@ export default function Contact() {
               </div>
               <div>
                 <h4 className="font-bold text-sm text-gray-800 dark:text-gray-200">Corporate HQ</h4>
-                <p className="text-xs text-gray-400 mt-0.5">San Francisco, CA, USA</p>
+                <p className="text-xs text-gray-400 mt-0.5">Mumbai,India</p>
               </div>
             </div>
           </div>
@@ -182,7 +182,7 @@ export default function Contact() {
               <MessageSquare className="w-4.5 h-4.5 text-brand-500" />
               <span>Simulated Client Communication Log ({submittedLogs.length})</span>
             </h3>
-            
+
             <div className="space-y-3">
               {submittedLogs.map((log, index) => (
                 <div key={index} className="p-4 bg-gray-50 dark:bg-darkBg border border-gray-100 dark:border-darkBorder/40 rounded-xl space-y-2">

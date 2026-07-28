@@ -149,7 +149,7 @@ export default function AICareerAssistant() {
   const [previewTemplateId, setPreviewTemplateId] = useState(null);
   const [downloadModalOpen, setDownloadModalOpen] = useState(false);
   const [downloading, setDownloading] = useState(false);
-  const [downloadFormat, setDownloadFormat] = useState(null); // 'pdf' | 'png'
+  const [downloadFormat, setDownloadFormat] = useState('pdf'); // 'pdf' | 'png'
 
   useEffect(() => {
     window.scrollTo(0, 0);
