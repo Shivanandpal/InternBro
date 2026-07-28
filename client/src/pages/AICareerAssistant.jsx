@@ -1571,15 +1571,33 @@ export default function AICareerAssistant() {
               </div>
 
               <div className="flex flex-col space-y-3">
+                {/* Google OAuth Button */}
+                <button
+                  type="button"
+                  onClick={() => {
+                    setShowLoginPrompt(false);
+                    window.location.href = 'https://internbro.onrender.com/auth/google';
+                  }}
+                  className="w-full flex items-center justify-center gap-3 py-3 px-4 rounded-xl border border-gray-200 dark:border-darkBorder bg-white dark:bg-darkBg text-gray-700 dark:text-gray-200 font-semibold text-sm hover:bg-gray-50 dark:hover:bg-darkCard transition-all shadow-sm"
+                >
+                  <svg className="w-5 h-5 flex-shrink-0" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                    <path d="M21.35,11.1H12v2.7h5.38c-0.24,1.28 -0.96,2.37 -2.04,3.1v2.58h3.3c1.93,-1.78 3.04,-4.4 3.04,-7.48c0,-0.64 -0.06,-1.25 -0.16,-1.9Z" fill="#4285F4" />
+                    <path d="M12,20.6c2.59,0 4.77,-0.86 6.36,-2.32l-3.3,-2.58c-0.91,0.61 -2.08,0.98 -3.06,0.98c-2.35,0 -4.35,-1.59 -5.06,-3.72H3.5v2.66c1.57,3.12 4.79,5.26 8.5,5.26Z" fill="#34A853" />
+                    <path d="M6.94,13.06c-0.18,-0.54 -0.28,-1.11 -0.28,-1.7s0.1,-1.16 0.28,-1.7V7.12H3.5c-0.6,1.2 -0.94,2.56 -0.94,4.0s0.34,2.8 0.94,4.0l3.44,-2.66c0,-0.12 0,-0.18 0,-0.28Z" fill="#FBBC05" />
+                    <path d="M12,6.46c1.41,0 2.68,0.49 3.68,1.44l2.76,-2.76C16.77,3.61 14.59,2.8 12,2.8C8.29,2.8 5.07,4.94 3.5,8.06l3.44,2.66c0.71,-2.13 2.71,-3.72 5.06,-3.72Z" fill="#EA4335" />
+                  </svg>
+                  <span>Continue with Google</span>
+                </button>
+
                 <button
                   onClick={() => {
                     setShowLoginPrompt(false);
                     navigate('/login');
                   }}
-                  className="w-full py-3.5 bg-gradient-to-r from-brand-600 to-violetAccent-500 hover:from-brand-700 hover:to-violetAccent-600 text-white rounded-xl font-bold text-sm shadow-md transition-all active:scale-95 flex items-center justify-center space-x-2"
+                  className="w-full py-3 bg-gradient-to-r from-brand-600 to-violetAccent-500 hover:from-brand-700 hover:to-violetAccent-600 text-white rounded-xl font-bold text-sm shadow-md transition-all active:scale-95 flex items-center justify-center space-x-2"
                 >
                   <LogIn className="w-4 h-4" />
-                  <span>Log In to Continue</span>
+                  <span>Log In with Email</span>
                 </button>
 
                 <button
